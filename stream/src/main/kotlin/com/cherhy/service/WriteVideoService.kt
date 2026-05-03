@@ -1,5 +1,6 @@
 package com.cherhy.service
 
+import com.cherhy.common.util.model.Price
 import com.cherhy.common.util.model.UserId
 import com.cherhy.domain.*
 import com.cherhy.repository.VideoRepository
@@ -14,6 +15,7 @@ class WriteVideoService(
         uniqueName: VideoUniqueName,
         size: VideoSize,
         extension: VideoExtension,
+        price: Price,
     ) =
         videoRepository.save(
             userId,
@@ -22,6 +24,7 @@ class WriteVideoService(
             uniqueName,
             size,
             extension,
+            price,
         )
 
     suspend fun update(
