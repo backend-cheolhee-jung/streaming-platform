@@ -43,9 +43,10 @@ class KafkaProducerConfigTest : FunSpec({
         config[ACKS_CONFIG] shouldBe "all"
     }
 
-    test("producer retries config is set") {
+    test("producer retries config is set and is an Int") {
         val config = buildProducerConfig()
         config[RETRIES_CONFIG] shouldNotBe null
+        config[RETRIES_CONFIG] shouldBe 100
     }
 
     test("producer bootstrap servers config is set") {
