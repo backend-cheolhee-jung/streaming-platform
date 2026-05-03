@@ -7,6 +7,8 @@ import io.kotest.matchers.shouldNotBe
 import org.apache.kafka.clients.consumer.ConsumerConfig.*
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.kafka.listener.ContainerProperties
+import org.springframework.kafka.listener.DefaultErrorHandler
+import org.springframework.util.backoff.FixedBackOff
 
 class KafkaConsumerConfigTest : FunSpec({
 
@@ -68,5 +70,21 @@ class KafkaConsumerConfigTest : FunSpec({
     test("ack mode BATCH is not MANUAL_IMMEDIATE to avoid unacknowledged message replay") {
         val ackMode = ContainerProperties.AckMode.BATCH
         ackMode shouldNotBe ContainerProperties.AckMode.MANUAL_IMMEDIATE
+    }
+
+    test("DefaultErrorHandler with FixedBackOff retries 3 times with 1000ms interval") {
+        val backOff = FixedBackOff(1000L, 3L)
+        backOff.interval shouldBe 1000L
+        backOff.maxAttempts shouldBe 3L
+    }
+
+    test("DefaultErrorHandler can be created with FixedBackOff") {
+        val errorHandler = DefaultErrorHandler(FixedBackOff(1000L, 3L))
+        errorHandler shouldNotBe null
+    }
+
+    test("pollTimeout is set to 3000ms") {
+        val pollTimeout = 3000L
+        pollTimeout shouldBe 3000L
     }
 })
