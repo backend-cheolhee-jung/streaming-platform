@@ -1,56 +1,69 @@
 package com.cherhy.producer.config
 
-import io.kotest.core.spec.style.FunSpec
+import com.cherhy.common.util.KafkaConstant.BOOTSTRAP_SERVERS
+import com.cherhy.common.util.KafkaConstant.Producer.ALL
+import com.cherhy.common.util.KafkaConstant.Producer.RETRIES
+import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.apache.kafka.clients.producer.ProducerConfig.*
 import org.apache.kafka.common.serialization.StringSerializer
 import org.springframework.kafka.support.serializer.JsonSerializer
 
-class KafkaProducerConfigTest : FunSpec({
+class KafkaProducerConfigTest : BehaviorSpec({
 
     fun buildProducerConfig(): Map<String, Any> =
         mapOf(
-            BOOTSTRAP_SERVERS_CONFIG to com.cherhy.common.util.KafkaConstant.BOOTSTRAP_SERVERS,
+            BOOTSTRAP_SERVERS_CONFIG to BOOTSTRAP_SERVERS,
             KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java.name,
             VALUE_SERIALIZER_CLASS_CONFIG to JsonSerializer::class.java.name,
-            ACKS_CONFIG to com.cherhy.common.util.KafkaConstant.Producer.ALL,
-            RETRIES_CONFIG to com.cherhy.common.util.KafkaConstant.Producer.RETRIES,
+            ACKS_CONFIG to ALL,
+            RETRIES_CONFIG to RETRIES,
         )
 
-    test("producer key serializer uses Kafka StringSerializer, not JsonSerializer") {
+    Given("KafkaProducerConfig 설정이 구성된 경우") {
         val config = buildProducerConfig()
-        config[KEY_SERIALIZER_CLASS_CONFIG] shouldBe StringSerializer::class.java.name
-    }
 
-    test("producer key serializer class name is org.apache.kafka.common.serialization.StringSerializer") {
-        val expectedClass = StringSerializer::class.java.name
-        expectedClass shouldBe "org.apache.kafka.common.serialization.StringSerializer"
-    }
+        When("key serializer를 확인하면") {
+            Then("Kafka StringSerializer를 사용한다") {
+                config[KEY_SERIALIZER_CLASS_CONFIG] shouldBe StringSerializer::class.java.name
+            }
 
-    test("producer value serializer uses JsonSerializer for structured payloads") {
-        val config = buildProducerConfig()
-        config[VALUE_SERIALIZER_CLASS_CONFIG] shouldBe JsonSerializer::class.java.name
-    }
+            Then("클래스 이름이 org.apache.kafka.common.serialization.StringSerializer이다") {
+                val expectedClass = StringSerializer::class.java.name
+                expectedClass shouldBe "org.apache.kafka.common.serialization.StringSerializer"
+            }
+        }
 
-    test("producer key and value serializers are different") {
-        val config = buildProducerConfig()
-        config[KEY_SERIALIZER_CLASS_CONFIG] shouldNotBe config[VALUE_SERIALIZER_CLASS_CONFIG]
-    }
+        When("value serializer를 확인하면") {
+            Then("구조화된 페이로드를 위해 JsonSerializer를 사용한다") {
+                config[VALUE_SERIALIZER_CLASS_CONFIG] shouldBe JsonSerializer::class.java.name
+            }
+        }
 
-    test("producer acks config is set to 'all' for durability") {
-        val config = buildProducerConfig()
-        config[ACKS_CONFIG] shouldBe "all"
-    }
+        When("key serializer와 value serializer를 비교하면") {
+            Then("서로 다른 serializer를 사용한다") {
+                config[KEY_SERIALIZER_CLASS_CONFIG] shouldNotBe config[VALUE_SERIALIZER_CLASS_CONFIG]
+            }
+        }
 
-    test("producer retries config is set and is an Int") {
-        val config = buildProducerConfig()
-        config[RETRIES_CONFIG] shouldNotBe null
-        config[RETRIES_CONFIG] shouldBe 100
-    }
+        When("acks 설정을 확인하면") {
+            Then("내구성을 위해 'all'로 설정된다") {
+                config[ACKS_CONFIG] shouldBe "all"
+            }
+        }
 
-    test("producer bootstrap servers config is set") {
-        val config = buildProducerConfig()
-        config[BOOTSTRAP_SERVERS_CONFIG] shouldBe com.cherhy.common.util.KafkaConstant.BOOTSTRAP_SERVERS
+        When("retries 설정을 확인하면") {
+            Then("null이 아니며 100으로 설정된다") {
+                config[RETRIES_CONFIG] shouldNotBe null
+                config[RETRIES_CONFIG] shouldBe 100
+            }
+        }
+
+        When("bootstrap servers 설정을 확인하면") {
+            Then("BOOTSTRAP_SERVERS 상수와 동일한 값으로 설정된다") {
+                config[BOOTSTRAP_SERVERS_CONFIG] shouldBe BOOTSTRAP_SERVERS
+            }
+        }
     }
 })
