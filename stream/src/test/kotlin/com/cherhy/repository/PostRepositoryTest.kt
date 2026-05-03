@@ -10,12 +10,8 @@ import io.kotest.matchers.shouldNotBe
 import org.ktorm.database.Database
 
 class PostRepositoryTest : FunSpec({
-    lateinit var db: Database
+    val db: Database by lazy { TestDatabase.start() }
     lateinit var repo: PostRepositoryImpl
-
-    beforeSpec {
-        db = TestDatabase.start()
-    }
 
     beforeEach {
         db.useConnection { conn ->

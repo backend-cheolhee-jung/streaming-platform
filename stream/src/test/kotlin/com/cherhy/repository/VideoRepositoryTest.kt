@@ -6,17 +6,14 @@ import com.cherhy.domain.*
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.shouldNotBeNull
 import org.ktorm.database.Database
 import java.math.BigDecimal
 
 class VideoRepositoryTest : FunSpec({
-    lateinit var db: Database
+    val db: Database by lazy { TestDatabase.start() }
     lateinit var postRepo: PostRepositoryImpl
     lateinit var videoRepo: VideoRepositoryImpl
-
-    beforeSpec {
-        db = TestDatabase.start()
-    }
 
     beforeEach {
         db.useConnection { conn ->
@@ -65,8 +62,8 @@ class VideoRepositoryTest : FunSpec({
         )
 
         val found = videoRepo.findOne(videoId)
-        found shouldNotBe null
-        found!!.name.value shouldBe "my-video"
+        found.shouldNotBeNull()
+        found.name.value shouldBe "my-video"
     }
 
     test("isExists returns true for saved video") {

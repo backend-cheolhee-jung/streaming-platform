@@ -1,4 +1,6 @@
 import DependencyVersions.ASPECTJ_WEAVER_VERSION
+import DependencyVersions.JUNIT_PLATFORM_LAUNCHER_VERSION
+import DependencyVersions.KAFKA_CLIENTS_VERSION
 import DependencyVersions.AXON_VERSION
 import DependencyVersions.BCRYPT_VERSION
 import DependencyVersions.COROUTINES_VERSION
