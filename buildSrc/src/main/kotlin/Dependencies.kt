@@ -19,6 +19,7 @@ import DependencyVersions.KOTEST_SPRING_EXTENSION_VERSION
 import DependencyVersions.KOTLIN_LOGGING_VERSION
 import DependencyVersions.JUNIT5_VERSION
 import DependencyVersions.KOTLIN_VERSION
+import DependencyVersions.TEST_CONTAINERS_VERSION
 import DependencyVersions.KOTLINX_SERIALIZATION_JSON_VERSION
 import DependencyVersions.KTORM_VERSION
 import DependencyVersions.KTOR_EXTENSION_VERSION
@@ -95,6 +96,7 @@ object Dependencies {
 
     object Ktorm {
         const val KTORM_CORE = "org.ktorm:ktorm-core:$KTORM_VERSION"
+        const val KTORM_SUPPORT_POSTGRESQL = "org.ktorm:ktorm-support-postgresql:$KTORM_VERSION"
     }
 
     object KMongo {

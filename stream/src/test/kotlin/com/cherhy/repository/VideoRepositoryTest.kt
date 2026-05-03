@@ -1,0 +1,90 @@
+package com.cherhy.repository
+
+import com.cherhy.common.util.model.UserId
+import com.cherhy.domain.*
+import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import org.ktorm.database.Database
+
+class VideoRepositoryTest : FunSpec({
+    lateinit var db: Database
+    lateinit var postRepo: PostRepositoryImpl
+    lateinit var videoRepo: VideoRepositoryImpl
+
+    beforeSpec {
+        db = TestDatabase.start()
+    }
+
+    beforeEach {
+        db.useConnection { conn ->
+            conn.createStatement().execute("TRUNCATE TABLE video, post RESTART IDENTITY CASCADE")
+        }
+        postRepo = PostRepositoryImpl(db)
+        videoRepo = VideoRepositoryImpl(db)
+    }
+
+    test("save returns a valid VideoId (not ClassCastException)") {
+        val postId = postRepo.save(
+            UserId.of(1L),
+            com.cherhy.domain.PostTitle.of("post"),
+            com.cherhy.domain.PostContent.of("content"),
+            PostCategory.MUSIC,
+        )
+
+        val videoId = videoRepo.save(
+            userId = UserId.of(1L),
+            postId = postId,
+            name = VideoName.of("my-video"),
+            uniqueName = VideoUniqueName.of("unique-abc"),
+            size = VideoSize.of(1024L),
+            extension = VideoExtension.of("mp4"),
+        )
+
+        videoId.value shouldNotBe 0L
+    }
+
+    test("findOne returns saved video by videoId") {
+        val postId = postRepo.save(
+            UserId.of(1L),
+            com.cherhy.domain.PostTitle.of("post"),
+            com.cherhy.domain.PostContent.of("content"),
+            PostCategory.MUSIC,
+        )
+        val videoId = videoRepo.save(
+            userId = UserId.of(1L),
+            postId = postId,
+            name = VideoName.of("my-video"),
+            uniqueName = VideoUniqueName.of("unique-xyz"),
+            size = VideoSize.of(2048L),
+            extension = VideoExtension.of("mp4"),
+        )
+
+        val found = videoRepo.findOne(videoId)
+        found shouldNotBe null
+        found!!.name.value shouldBe "my-video"
+    }
+
+    test("isExists returns true for saved video") {
+        val postId = postRepo.save(
+            UserId.of(1L),
+            com.cherhy.domain.PostTitle.of("post"),
+            com.cherhy.domain.PostContent.of("content"),
+            PostCategory.MUSIC,
+        )
+        val videoId = videoRepo.save(
+            userId = UserId.of(1L),
+            postId = postId,
+            name = VideoName.of("exists-video"),
+            uniqueName = VideoUniqueName.of("unique-exists"),
+            size = VideoSize.of(512L),
+            extension = VideoExtension.of("mp4"),
+        )
+
+        videoRepo.isExists(videoId) shouldBe true
+    }
+
+    test("isExists returns false for nonexistent video") {
+        videoRepo.isExists(VideoId.of(99999L)) shouldBe false
+    }
+})

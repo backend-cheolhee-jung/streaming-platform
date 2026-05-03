@@ -12,14 +12,30 @@ import org.ktorm.schema.long
 import org.ktorm.schema.varchar
 
 object Videos : BaseTable<Video>("video") {
-    val id = long("id").primaryKey().bindTo { it.id.value }
-    val name = varchar("name").bindTo { it.name.value }
-    val uniqueName = varchar("unique_name").bindTo { it.uniqueName.value }
-    val size = long("size").bindTo { it.size.value }
-    val extension = varchar("extension").bindTo { it.extension.value }
-    val price = decimal("price").bindTo { it.price.value }
-    val owner = long("owner").bindTo { it.owner.value }
-    val post = long("post").bindTo { it.post.value }
+    val id = long("id").primaryKey()
+        .transform({ VideoId.of(it) }, { it.value })
+        .bindTo { it.id }
+    val name = varchar("name")
+        .transform({ VideoName.of(it) }, { it.value })
+        .bindTo { it.name }
+    val uniqueName = varchar("unique_name")
+        .transform({ VideoUniqueName.of(it) }, { it.value })
+        .bindTo { it.uniqueName }
+    val size = long("size")
+        .transform({ VideoSize.of(it) }, { it.value })
+        .bindTo { it.size }
+    val extension = varchar("extension")
+        .transform({ VideoExtension.of(it) }, { it.value })
+        .bindTo { it.extension }
+    val price = decimal("price")
+        .transform({ Price.of(it) }, { it.value })
+        .bindTo { it.price }
+    val owner = long("owner")
+        .transform({ UserId.of(it) }, { it.value })
+        .bindTo { it.owner }
+    val post = long("post")
+        .transform({ PostId.of(it) }, { it.value })
+        .bindTo { it.post }
 }
 
 interface Video : BaseEntity<Video> {
@@ -46,7 +62,7 @@ value class VideoId(
     }
 }
 
-fun Any.toVideoId() = VideoId.of(this as Long)
+fun Any.toVideoId() = this as VideoId
 
 @JvmInline
 value class VideoSize(

@@ -11,11 +11,21 @@ import org.ktorm.schema.long
 import org.ktorm.schema.varchar
 
 object Posts : BaseTable<Post>("post") {
-    val id = long("id").primaryKey().bindTo { it.id.value }
-    val title = varchar("title").bindTo { it.title.value }
-    val content = varchar("content").bindTo { it.content.value }
-    val author = long("author").bindTo { it.author.value }
-    val category = varchar("category").bindTo { it.category.name }
+    val id = long("id").primaryKey()
+        .transform({ PostId.of(it) }, { it.value })
+        .bindTo { it.id }
+    val title = varchar("title")
+        .transform({ PostTitle.of(it) }, { it.value })
+        .bindTo { it.title }
+    val content = varchar("content")
+        .transform({ PostContent.of(it) }, { it.value })
+        .bindTo { it.content }
+    val author = long("author")
+        .transform({ UserId.of(it) }, { it.value })
+        .bindTo { it.author }
+    val category = varchar("category")
+        .transform({ PostCategory.valueOf(it) }, { it.name })
+        .bindTo { it.category }
 }
 
 interface Post : BaseEntity<Post> {
@@ -40,7 +50,7 @@ value class PostId(
     }
 }
 
-fun Any.toPostId() = PostId.of(this as Long)
+fun Any.toPostId() = this as PostId
 
 @JvmInline
 @Serializable
