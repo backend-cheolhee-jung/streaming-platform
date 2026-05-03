@@ -44,6 +44,9 @@ axon-server-se/config/
 axon-server-se/data/
 axon-server-se/events/
 
+### Worktrees ###
+.worktrees/
+
 ### Third Party ###
 third-party/postgres/master-data/
 third-party/postgres/slave-data/
