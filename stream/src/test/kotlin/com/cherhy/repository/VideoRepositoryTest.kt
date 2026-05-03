@@ -1,11 +1,13 @@
 package com.cherhy.repository
 
+import com.cherhy.common.util.model.Price
 import com.cherhy.common.util.model.UserId
 import com.cherhy.domain.*
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.ktorm.database.Database
+import java.math.BigDecimal
 
 class VideoRepositoryTest : FunSpec({
     lateinit var db: Database
@@ -39,6 +41,7 @@ class VideoRepositoryTest : FunSpec({
             uniqueName = VideoUniqueName.of("unique-abc"),
             size = VideoSize.of(1024L),
             extension = VideoExtension.of("mp4"),
+            price = Price.of(BigDecimal.ZERO),
         )
 
         videoId.value shouldNotBe 0L
@@ -58,6 +61,7 @@ class VideoRepositoryTest : FunSpec({
             uniqueName = VideoUniqueName.of("unique-xyz"),
             size = VideoSize.of(2048L),
             extension = VideoExtension.of("mp4"),
+            price = Price.of(BigDecimal.ZERO),
         )
 
         val found = videoRepo.findOne(videoId)
@@ -79,6 +83,7 @@ class VideoRepositoryTest : FunSpec({
             uniqueName = VideoUniqueName.of("unique-exists"),
             size = VideoSize.of(512L),
             extension = VideoExtension.of("mp4"),
+            price = Price.of(BigDecimal.ZERO),
         )
 
         videoRepo.isExists(videoId) shouldBe true

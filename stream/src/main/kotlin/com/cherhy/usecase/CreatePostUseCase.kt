@@ -26,7 +26,7 @@ class CreatePostUseCase(
         reactiveTransaction {
             val postId = writePostService.create(userId, post.title, post.content, post.category)
 
-            writeVideoService.create(userId, postId, video.name, video.uniqueName, video.size, video.extension)
+            writeVideoService.create(userId, postId, video.name, video.uniqueName, video.size, video.extension, video.price)
             videoStorage.upload(bucket, video.uniqueName, video.data, video.size, video.extension)
             Unit
         }

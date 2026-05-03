@@ -2,6 +2,7 @@ package com.cherhy.repository
 
 import com.cherhy.api.VideoDetailResponse
 import com.cherhy.common.util.extension.noReturn
+import com.cherhy.common.util.model.Price
 import com.cherhy.common.util.model.UserId
 import com.cherhy.domain.*
 import com.cherhy.plugins.database
@@ -16,6 +17,7 @@ interface VideoRepository {
         uniqueName: VideoUniqueName,
         size: VideoSize,
         extension: VideoExtension,
+        price: Price,
     ): VideoId
 
     suspend fun update(
@@ -61,6 +63,7 @@ class VideoRepositoryImpl(
         uniqueName: VideoUniqueName,
         size: VideoSize,
         extension: VideoExtension,
+        price: Price,
     ) =
         db.insertAndGenerateKey(Videos) {
             set(it.owner, userId)
@@ -69,6 +72,7 @@ class VideoRepositoryImpl(
             set(it.uniqueName, uniqueName)
             set(it.size, size)
             set(it.extension, extension)
+            set(it.price, price)
         }.toVideoId()
 
     override suspend fun update(
