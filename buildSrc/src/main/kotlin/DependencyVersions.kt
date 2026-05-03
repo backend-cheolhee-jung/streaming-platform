@@ -41,4 +41,6 @@ object DependencyVersions {
     const val KOTLINX_SERIALIZATION_JSON_VERSION = "1.7.3"
     const val JUNIT5_VERSION = "5.10.0"
     const val TEST_CONTAINERS_VERSION = "1.20.1"
+    const val JUNIT_PLATFORM_LAUNCHER_VERSION = "1.10.0"
+    const val KAFKA_CLIENTS_VERSION = "3.8.0"
 }

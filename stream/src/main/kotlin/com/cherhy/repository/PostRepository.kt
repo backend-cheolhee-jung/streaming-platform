@@ -121,9 +121,9 @@ class PostRepositoryImpl(
         size: Size,
     ): PageResponse<PostItemResponse> {
         val generator = PageOffsetCalculator.of(page, size)
-        var expression = db.posts.filter { it.author eq userId }
-        keyword?.let { kw -> expression = expression.filter { it.title contains kw.value } }
-        category?.let { cat -> expression = expression.filter { it.category eq cat } }
+        val expression = db.posts.filter { it.author eq userId }
+            .let { seq -> keyword?.let { kw -> seq.filter { it.title contains kw.value } } ?: seq }
+            .let { seq -> category?.let { cat -> seq.filter { it.category eq cat } } ?: seq }
 
         val count = expression.count().toLong()
         val data = expression.query

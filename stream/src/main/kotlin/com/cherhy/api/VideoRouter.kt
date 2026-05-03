@@ -11,11 +11,12 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.koin.ktor.ext.getKoin
+import org.koin.ktor.ext.inject
 
 fun Route.video() {
+    val getVideoUseCase by inject<GetVideoUseCase>()
+
     get(GET_VIDEO) {
-        val getVideoUseCase = call.application.getKoin().get<GetVideoUseCase>()
         val userId = call.request.userId
         val postId = call.pathParameter.postId
         val videoId = call.pathParameter.videoId
