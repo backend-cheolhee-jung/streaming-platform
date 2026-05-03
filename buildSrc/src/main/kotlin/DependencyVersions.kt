@@ -40,4 +40,5 @@ object DependencyVersions {
     const val KTOR_EXTENSION_VERSION = "1.0.3"
     const val KOTLINX_SERIALIZATION_JSON_VERSION = "1.7.3"
     const val JUNIT5_VERSION = "5.10.0"
+    const val TEST_CONTAINERS_VERSION = "1.20.1"
 }

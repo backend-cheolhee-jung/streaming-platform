@@ -17,10 +17,10 @@ import org.ktorm.database.TransactionIsolation
 val database = Database.connect(
     HikariDataSource(
         HikariConfig().apply {
-            driverClassName = getDataSource(URL)
-            jdbcUrl = getDataSource(USERNAME)
-            username = getDataSource(PASSWORD)
-            password = getDataSource(DRIVER_CLASS_NAME)
+            driverClassName = getDataSource(DRIVER_CLASS_NAME)
+            jdbcUrl = getDataSource(URL)
+            username = getDataSource(USERNAME)
+            password = getDataSource(PASSWORD)
             maximumPoolSize = getDataSource(MAX_POOL_SIZE).toInt()
             transactionIsolation = TRANSACTION_ISOLATION
             isAutoCommit = false

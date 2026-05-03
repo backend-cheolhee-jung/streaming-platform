@@ -24,12 +24,14 @@ interface PurchasedVideoRepository {
     )
 }
 
-class PurchasedVideoRepositoryImpl : PurchasedVideoRepository {
+class PurchasedVideoRepositoryImpl(
+    private val db: org.ktorm.database.Database = database,
+) : PurchasedVideoRepository {
     override suspend fun isExists(
         userId: UserId,
         videoId: VideoId
     ) =
-        database.purchasedVideos.find { (it.userId eq userId.value) and (it.videoId eq videoId.value) }
+        db.purchasedVideos.find { (it.userId eq userId) and (it.videoId eq videoId) }
             ?.let { true }
             ?: false
 
@@ -38,10 +40,10 @@ class PurchasedVideoRepositoryImpl : PurchasedVideoRepository {
         videoId: VideoId,
         price: Price,
     ) {
-        database.insert(PurchasedVideos) {
-            set(it.userId, userId.value)
-            set(it.videoId, videoId.value)
-            set(it.price, price.value)
+        db.insert(PurchasedVideos) {
+            set(it.userId, userId)
+            set(it.videoId, videoId)
+            set(it.price, price)
         }
     }
 }
