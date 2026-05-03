@@ -163,7 +163,7 @@ object Dependencies {
     }
 
     object Redis {
-        const val LETTUCE_CORE = "io.lettuce.core:lettuce-core:$LETTUCE_VERSION"
+        const val LETTUCE_CORE = "io.lettuce:lettuce-core:$LETTUCE_VERSION"
         const val SPRING_REDISSON = "org.redisson:redisson-spring-boot-starter:$REDISSON_VERSION"
     }
 
