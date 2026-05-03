@@ -10,17 +10,18 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.testcontainers.containers.PostgreSQLContainer
 
 class DatabaseConfigTest : FunSpec({
+    companion object {
+        private const val TEST_PASSWORD = "postgres"
+    }
+
     val container = PostgreSQLContainer<Nothing>("postgres:16-alpine").apply {
         withDatabaseName("schedule_test")
         withUsername("postgres")
-        withPassword("postgres")
+        withPassword(TEST_PASSWORD)
     }
 
-    lateinit var db: Database
-
-    beforeSpec {
-        container.start()
-        db = Database.connect(
+    val db: Database by lazy {
+        Database.connect(
             HikariDataSource(
                 HikariConfig().apply {
                     driverClassName = "org.postgresql.Driver"
@@ -32,6 +33,10 @@ class DatabaseConfigTest : FunSpec({
                 }
             )
         )
+    }
+
+    beforeSpec {
+        container.start()
     }
 
     afterSpec {
