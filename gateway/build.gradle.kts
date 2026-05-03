@@ -23,7 +23,6 @@ dependencies {
     implementation(SpringBootStarters.SPRING_BOOT_STARTER_ACTUATOR)
     implementation(SpringBootStarters.SPRING_BOOT_STARTER_WEBFLUX)
     implementation(SpringBootStarters.SPRING_BOOT_STARTER_SECURITY)
-    implementation(Security.SPRING_SECURITY_JWT)
 
     implementation(Other.MUTINY_KOTLIN)
 

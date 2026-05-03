@@ -1,4 +1,4 @@
-FROM openjdk:21
+FROM eclipse-temurin:21-jre
 LABEL authors="cherhy"
 COPY ./build/libs/user.jar app.jar
 
