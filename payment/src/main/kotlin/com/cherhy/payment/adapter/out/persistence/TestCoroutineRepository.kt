@@ -1,5 +1,6 @@
 package com.cherhy.payment.adapter.out.persistence
 
+import com.cherhy.payment.annotation.PersistenceAdapter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactor.awaitSingleOrNull
@@ -11,7 +12,6 @@ import org.springframework.data.r2dbc.core.select
 import org.springframework.data.relational.core.query.Criteria
 import org.springframework.data.relational.core.query.Query
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
-import org.springframework.stereotype.Repository
 
 interface TestCoroutineRepository : CoroutineCrudRepository<TestR2dbcEntity, Long>, TestRepositoryCustom
 
@@ -28,7 +28,7 @@ interface TestRepositoryCustom {
     ): Long
 }
 
-@Repository
+@PersistenceAdapter
 class TestRepositoryCustomImpl(
     private val template: R2dbcEntityTemplate,
 ) : TestRepositoryCustom {
