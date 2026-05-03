@@ -28,7 +28,7 @@ class DatabaseConfigTest : FunSpec({
                     username = container.username
                     password = container.password
                     maximumPoolSize = 5
-                    isAutoCommit = true
+                    isAutoCommit = false
                 }
             )
         )
@@ -36,6 +36,12 @@ class DatabaseConfigTest : FunSpec({
 
     afterSpec {
         container.stop()
+    }
+
+    afterTest {
+        transaction(db) {
+            exec("DROP TABLE IF EXISTS test_table")
+        }
     }
 
     test("database connection is established successfully") {
@@ -59,7 +65,7 @@ class DatabaseConfigTest : FunSpec({
             username = container.username
             password = container.password
             maximumPoolSize = 5
-            isAutoCommit = true
+            isAutoCommit = false
         }
         config.driverClassName shouldBe "org.postgresql.Driver"
         config.jdbcUrl shouldBe container.jdbcUrl
