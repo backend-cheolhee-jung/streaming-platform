@@ -40,14 +40,10 @@ dependencies {
 
     developmentOnly(Other.DOCKER_COMPOSE)
 
-    testImplementation(Test.KOTLIN_TEST_JUNIT)
     testImplementation(Test.KOTEST_RUNNER_JUNIT5)
-    testImplementation(Test.KOTEST_ASSERTIONS_CORE)
-
     testImplementation(Test.KOTEST_EXTENSIONS_SPRING)
     testImplementation(Test.SPRING_BOOT_STARTER_TEST)
-    testImplementation(Test.KOTLIN_TEST_JUNIT5)
-    testImplementation(Test.PLATFORM_LAUNCHER)
+    testImplementation(Test.REACTOR_TEST)
 }
 
 java {
