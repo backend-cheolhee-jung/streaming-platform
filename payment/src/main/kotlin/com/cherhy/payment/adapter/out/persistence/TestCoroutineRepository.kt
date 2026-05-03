@@ -1,7 +1,7 @@
 package com.cherhy.payment.adapter.out.persistence
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.data.domain.Pageable
 import org.springframework.data.mapping.toDotPath
@@ -12,7 +12,6 @@ import org.springframework.data.relational.core.query.Criteria
 import org.springframework.data.relational.core.query.Query
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 import org.springframework.stereotype.Repository
-import kotlin.reflect.KProperty
 
 interface TestCoroutineRepository : CoroutineCrudRepository<TestR2dbcEntity, Long>, TestRepositoryCustom
 
@@ -39,51 +38,39 @@ class TestRepositoryCustomImpl(
         pageable: Pageable,
     ) =
         template.select<TestR2dbcEntity>()
-            .findAll(
-                where(TestR2dbcEntity::name)
-                    .equalsTo(name)
-                    .and(TestR2dbcEntity::status)
-                    .equalsTo(status)
-                    .toQuery()
-            )
+            .findAll(buildQuery(name, status))
 
     override suspend fun countAll(
         name: String?,
         status: String?,
     ) =
         template.select<TestR2dbcEntity>()
-            .count(
-                where(TestR2dbcEntity::name)
-                    .equalsTo(name)
-                    .and(TestR2dbcEntity::status)
-                    .equalsTo(status)
-                    .toQuery()
-            )
+            .count(buildQuery(name, status))
+}
+
+private fun buildQuery(
+    name: String?,
+    status: String?,
+): Query {
+    var criteria: Criteria? = null
+    if (name != null) {
+        criteria = Criteria.where(TestR2dbcEntity::name.toDotPath()).`is`(name)
+    }
+    if (status != null) {
+        criteria = if (criteria == null) {
+            Criteria.where(TestR2dbcEntity::status.toDotPath()).`is`(status)
+        } else {
+            criteria.and(TestR2dbcEntity::status.toDotPath()).`is`(status)
+        }
+    }
+    return if (criteria == null) Query.empty() else Query.query(criteria)
 }
 
 private suspend fun <T> ReactiveSelectOperation.ReactiveSelect<T>.count(
-    toQuery: Query
+    toQuery: Query,
 ): Long =
     this.matching(toQuery).count().awaitSingleOrNull()!!
 
-private fun where(
-    property: KProperty<*>,
-) = Criteria.where(property.toDotPath())
-
-private fun count(
-    criteria: Criteria,
-) = Query.query(criteria)
-
-private fun Criteria.and(
-    property: KProperty<*>,
-) = this.and(property.toDotPath())
-
-private fun Criteria.toQuery() = Query.query(this)
-
-private fun <T> Criteria.CriteriaStep.equalsTo(
-    value: T?,
-) = value?.let { this.`is`(it) }!!
-
-fun <T> ReactiveSelectOperation.ReactiveSelect<T>.findAll(
+fun <T : Any> ReactiveSelectOperation.ReactiveSelect<T>.findAll(
     predicate: Query,
-) = this.matching(predicate).all().toIterable().asFlow()
+): Flow<T> = this.matching(predicate).all().asFlow()
