@@ -47,8 +47,8 @@ dependencies {
     implementation(Ktor.KTOR_SERVER_AUTH_JVM)
     implementation(Ktor.KTOR_SERVER_AUTH_JWT_JVM)
 
-    testImplementation(Test.KOTLIN_TEST_JUNIT)
-    testImplementation(Test.KTOR_SERVER_TESTS_JVM)
+    testImplementation(Test.KOTEST_RUNNER_JUNIT5)
+    testImplementation(Test.KOTEST_ASSERTIONS_CORE)
 }
 
 java {
