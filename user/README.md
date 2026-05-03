@@ -20,7 +20,7 @@
 
 ## 워크플로우 요약
 
-- 진입점: `cherhy.example.Application#module` — routing, jackson, jwt, koin DI, database 순으로 구성.
+- 진입점: `cherhy.example.Application#module` — routing, jwt, jackson, koin DI, database 순으로 구성.
 - 외부 의존성: `postgres-master:5432`, `postgres-slave:5433` (master 쓰기 / slave 읽기 분리).
 - API:
   - `POST /users/signup` → password salt + bcrypt 인코딩 → `User` 엔티티 생성 → `Authority` 부여 → 자동 로그인.
