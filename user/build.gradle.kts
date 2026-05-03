@@ -1,8 +1,9 @@
-import Dependencies.Database
+import Dependencies.Coroutines
 import Dependencies.Exposed
 import Dependencies.Kotlin
 import Dependencies.Ktor
 import Dependencies.Logging
+import Dependencies.R2dbc
 import Dependencies.Security
 import Dependencies.Test
 
@@ -24,6 +25,7 @@ dependencies {
     implementation(project(UtilityModules.COMMON))
 
     implementation(Logging.KOTLIN_LOGGING)
+    implementation(Logging.LOGBACK_CLASSIC)
     implementation(Kotlin.SERIALIZATION_JSON)
     implementation(Kotlin.JACKSON_DATA_TYPE_JSR310)
     implementation(Ktor.KTOR_SERVER_CORE_JVM)
@@ -32,19 +34,14 @@ dependencies {
     implementation(Ktor.KTOR_SERIALIZATION_KOTLINX_JSON_JVM)
     implementation(Ktor.KTOR_SERVER_CONFIG_YAML)
     implementation(Ktor.KTOR_SERVER_CALL_LOGGING_JVM)
-    implementation(Ktor.KTOR_SERVER_SWAGGER_JVM)
     implementation(Ktor.KTOR_SERVER_CONTENT_NEGOTIATION_JVM)
     implementation(Ktor.KTOR_SERVER_STATUS_PAGES)
     implementation(Ktor.KTOR_KOIN)
 
-    implementation(Exposed.EXPOSED_CORE)
-    implementation(Exposed.EXPOSED_DAO)
+    implementation(Exposed.EXPOSED_R2DBC)
     implementation(Exposed.EXPOSED_JAVA_TIME)
-    implementation(Exposed.EXPOSED_JDBC)
-    implementation(Exposed.EXPOSED_JSON)
-
-    implementation(Database.POSTGRESQL)
-    implementation(Database.HIKARI_CP)
+    implementation(R2dbc.R2DBC_POSTGRESQL)
+    implementation(Coroutines.KOTLIN_COROUTINES_CORE)
 
     implementation(Security.BCRYPT)
     implementation(Ktor.KTOR_SERVER_AUTH_JVM)
@@ -61,6 +58,7 @@ java {
 tasks.shadowJar {
     enabled = true
     archiveFileName.set("${project.name}.jar")
+    mergeServiceFiles()
 
     manifest {
         attributes(

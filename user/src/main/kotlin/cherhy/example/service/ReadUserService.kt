@@ -1,6 +1,5 @@
 package cherhy.example.service
 
-import cherhy.example.domain.UserDomain
 import cherhy.example.domain.UserEmail
 import cherhy.example.repository.UserRepository
 import com.cherhy.common.util.model.UserId
@@ -20,12 +19,10 @@ class ReadUserService(
         email: UserEmail,
     ) =
         userRepository.findOne(email)
-            ?.let(UserDomain::of)
             ?: throw IllegalStateException("User not found")
 
     suspend fun get(
         userId: UserId,
     ) = userRepository.findOne(userId)
-        ?.let(UserDomain::of)
         ?: throw IllegalStateException("User not found")
 }

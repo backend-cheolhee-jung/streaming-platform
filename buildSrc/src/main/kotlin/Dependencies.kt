@@ -83,10 +83,11 @@ object Dependencies {
 
     object Exposed {
         const val EXPOSED_CORE = "org.jetbrains.exposed:exposed-core:$EXPOSED_VERSION"
-        const val EXPOSED_DAO = "org.jetbrains.exposed:exposed-dao:$EXPOSED_VERSION"
+        const val EXPOSED_R2DBC = "org.jetbrains.exposed:exposed-r2dbc:$EXPOSED_VERSION"
         const val EXPOSED_JAVA_TIME = "org.jetbrains.exposed:exposed-java-time:$EXPOSED_VERSION"
-        const val EXPOSED_JDBC = "org.jetbrains.exposed:exposed-jdbc:$EXPOSED_VERSION"
         const val EXPOSED_JSON = "org.jetbrains.exposed:exposed-json:$EXPOSED_VERSION"
+        const val EXPOSED_DAO = "org.jetbrains.exposed:exposed-dao:$EXPOSED_VERSION"
+        const val EXPOSED_JDBC = "org.jetbrains.exposed:exposed-jdbc:$EXPOSED_VERSION"
     }
 
     object Ktorm {
@@ -112,7 +113,7 @@ object Dependencies {
 
     object R2dbc {
         const val R2DBC_POOL = "io.r2dbc:r2dbc-pool:$R2DBC_POOL_VERSION"
-        const val R2DBC_POSTGRESQL = "io.r2dbc:r2dbc-postgresql:$R2DBC_POSTGRESQL_VERSION"
+        const val R2DBC_POSTGRESQL = "org.postgresql:r2dbc-postgresql:$R2DBC_POSTGRESQL_VERSION"
     }
 
     object Flyway {

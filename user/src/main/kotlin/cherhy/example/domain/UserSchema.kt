@@ -1,29 +1,25 @@
 package cherhy.example.domain
 
-import cherhy.example.util.model.BaseEntity
-import cherhy.example.util.model.BaseEntityClass
-import cherhy.example.util.model.BaseLongIdTable
 import com.cherhy.common.util.model.UserId
-import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.v1.core.ResultRow
+import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
+import org.jetbrains.exposed.v1.javatime.datetime
 
-object Users: BaseLongIdTable("user", "id") {
+object Users : LongIdTable("user", "id") {
     val name = varchar("name", 50)
     val email = varchar("email", 50)
-    val password = varchar("password", 50)
-    val salt = varchar("salt", 50)
+    val password = varchar("password", 100)
+    val salt = varchar("salt", 100)
     val isDeleted = bool("is_deleted").default(false)
+    val createdAt = datetime("created_at")
+    val updatedAt = datetime("updated_at")
 }
 
-class User(id: EntityID<UserId>): BaseEntity(
-    id = id.unwrap(),
-    table = Users,
-) {
-    var name by Users.name
-    var email by Users.email
-    var password by Users.password
-    var salt by Users.salt
-    var isDeleted by Users.isDeleted
-    companion object: BaseEntityClass<User>(Users)
-}
-
-private fun EntityID<UserId>.unwrap() = EntityID(value.value, Users)
+fun ResultRow.toUserDomain() = UserDomain(
+    id = UserId.of(this[Users.id].value),
+    name = Username.of(this[Users.name]),
+    email = UserEmail.of(this[Users.email]),
+    password = UserPassword.of(this[Users.password]),
+    salt = UserSalt.of(this[Users.salt]),
+    isDeleted = UserIsDeleted.of(this[Users.isDeleted]),
+)

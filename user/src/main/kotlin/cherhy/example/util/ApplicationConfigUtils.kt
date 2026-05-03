@@ -12,7 +12,7 @@ object ApplicationConfigUtils {
     fun getDataSource(
         dataSourceType: DataSourceType,
         key: String,
-    ) = getConfigProperty("database.${dataSourceType.name}.datasource.$key")
+    ) = getConfigProperty("database.${dataSourceType.name.lowercase()}.datasource.$key")
 
     fun getJwt(
         key: String,

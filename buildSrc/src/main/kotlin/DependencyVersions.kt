@@ -1,7 +1,7 @@
 object DependencyVersions {
     const val KOTLIN_VERSION = "2.0.0"
     const val LOGBACK_VERSION = "1.5.6"
-    const val EXPOSED_VERSION = "0.49.0"
+    const val EXPOSED_VERSION = "1.0.0-beta-4"
 
     const val JUNIT_VERSION = "5.7.2"
 
@@ -25,11 +25,11 @@ object DependencyVersions {
     const val RESTDOCS_VERSION = "3.0.1"
     const val ASPECTJ_WEAVER_VERSION = "1.9.22.1"
     const val AXON_VERSION = "4.9.3"
-    const val R2DBC_POSTGRESQL_VERSION = "0.8.13.RELEASE"
+    const val R2DBC_POSTGRESQL_VERSION = "1.0.7.RELEASE"
     const val R2DBC_POOL_VERSION = "1.0.2.RELEASE"
     const val FLYWAY_VERSION = "10.15.0"
     const val SPRING_MOCKK_VERSION = "4.0.2"
-    const val KOIN_KTOR_VERSION = "3.5.6"
+    const val KOIN_KTOR_VERSION = "4.0.2"
     const val MINIO_VERSION = "8.5.10"
     const val LETTUCE_VERSION = "6.4.0.RELEASE"
     const val KMONGO_VERSION = "5.1.0"

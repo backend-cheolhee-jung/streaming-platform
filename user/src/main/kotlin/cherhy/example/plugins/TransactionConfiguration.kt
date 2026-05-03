@@ -2,39 +2,14 @@ package cherhy.example.plugins
 
 import cherhy.example.util.DatabaseFactory
 import cherhy.example.util.TransactionType
-import kotlinx.coroutines.Dispatchers
-import org.jetbrains.exposed.sql.Transaction
-import org.jetbrains.exposed.sql.statements.StatementContext
-import org.jetbrains.exposed.sql.statements.StatementInterceptor
-import org.jetbrains.exposed.sql.statements.StatementType
-import org.jetbrains.exposed.sql.transactions.TransactionManager
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import cherhy.example.util.TransactionType.READ_ONLY
+import org.jetbrains.exposed.v1.r2dbc.R2dbcTransaction
+import org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
 
 suspend fun <T> reactiveTransaction(
     transactionType: TransactionType = TransactionType.WRITE,
-    block: suspend () -> T,
-): T =
-    if (transactionType == TransactionType.WRITE) {
-        newSuspendedTransaction(Dispatchers.IO, DatabaseFactory.masterDatabase) {
-            block()
-        }
-    } else {
-        newSuspendedTransaction(Dispatchers.IO, DatabaseFactory.slaveDatabase) {
-            TransactionManager.current().registerInterceptor(TransactionInterceptor)
-            block()
-        }
-    }
-
-private object TransactionInterceptor: StatementInterceptor {
-    override fun beforeExecution(
-        transaction: Transaction,
-        context: StatementContext,
-    ) =
-        when (context.statement.type) {
-            StatementType.INSERT,
-            StatementType.UPDATE,
-            StatementType.DELETE,
-            -> throw IllegalStateException("Read-only transaction is not allowed to execute write operations.")
-            else -> Unit
-        }
+    block: suspend R2dbcTransaction.() -> T,
+): T {
+    val db = if (transactionType == READ_ONLY) DatabaseFactory.slaveDb else DatabaseFactory.masterDb
+    return suspendTransaction(db = db) { block() }
 }
