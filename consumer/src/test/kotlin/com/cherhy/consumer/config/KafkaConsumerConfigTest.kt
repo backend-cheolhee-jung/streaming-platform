@@ -1,90 +1,97 @@
 package com.cherhy.consumer.config
 
 import com.cherhy.common.util.KafkaConstant
-import io.kotest.core.spec.style.FunSpec
+import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import org.apache.kafka.clients.consumer.ConsumerConfig.*
+import org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_OFFSET_RESET_CONFIG
+import org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG
+import org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG
+import org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG
+import org.apache.kafka.clients.consumer.ConsumerConfig.MAX_POLL_RECORDS_CONFIG
+import org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.kafka.listener.ContainerProperties
-import org.springframework.kafka.listener.DefaultErrorHandler
-import org.springframework.util.backoff.FixedBackOff
 
-class KafkaConsumerConfigTest : FunSpec({
+class KafkaConsumerConfigTest : BehaviorSpec({
 
-    fun buildConsumerConfig(): Map<String, Any> =
-        mapOf(
-            BOOTSTRAP_SERVERS_CONFIG to KafkaConstant.BOOTSTRAP_SERVERS,
-            GROUP_ID_CONFIG to KafkaConstant.Consumer.DEFAULT_GROUP_ID,
-            KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java.name,
-            VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java.name,
-            AUTO_OFFSET_RESET_CONFIG to KafkaConstant.Consumer.EARLIEST,
-            MAX_POLL_RECORDS_CONFIG to 10,
-        )
+    val kafkaConsumerConfig = KafkaConsumerConfig()
 
-    test("consumer key deserializer uses Kafka StringDeserializer") {
-        val config = buildConsumerConfig()
-        config[KEY_DESERIALIZER_CLASS_CONFIG] shouldBe StringDeserializer::class.java.name
+    afterEach { }
+
+    Given("KafkaConsumerConfig의 consumerFactory가 생성되었을 때") {
+        val consumerFactory = kafkaConsumerConfig.consumerFactory()
+        val config = consumerFactory.configurationProperties
+
+        When("key deserializer 설정을 조회하면") {
+            Then("Kafka StringDeserializer가 사용된다") {
+                config[KEY_DESERIALIZER_CLASS_CONFIG] shouldBe StringDeserializer::class.java.name
+            }
+        }
+
+        When("value deserializer 설정을 조회하면") {
+            Then("Kafka StringDeserializer가 사용된다") {
+                config[VALUE_DESERIALIZER_CLASS_CONFIG] shouldBe StringDeserializer::class.java.name
+            }
+        }
+
+        When("key와 value deserializer 설정을 비교하면") {
+            Then("동일한 StringDeserializer를 사용한다") {
+                config[KEY_DESERIALIZER_CLASS_CONFIG] shouldBe config[VALUE_DESERIALIZER_CLASS_CONFIG]
+            }
+        }
+
+        When("auto offset reset 설정을 조회하면") {
+            Then("earliest로 설정되어 있다") {
+                config[AUTO_OFFSET_RESET_CONFIG] shouldBe KafkaConstant.Consumer.EARLIEST
+            }
+        }
+
+        When("max poll records 설정을 조회하면") {
+            Then("10으로 설정되어 있다") {
+                config[MAX_POLL_RECORDS_CONFIG] shouldBe 10
+            }
+        }
+
+        When("group id 설정을 조회하면") {
+            Then("null이 아니며 DEFAULT_GROUP_ID와 일치한다") {
+                config[GROUP_ID_CONFIG] shouldNotBe null
+                config[GROUP_ID_CONFIG] shouldBe KafkaConstant.Consumer.DEFAULT_GROUP_ID
+            }
+        }
+
+        When("bootstrap servers 설정을 조회하면") {
+            Then("KafkaConstant.BOOTSTRAP_SERVERS와 일치한다") {
+                config[BOOTSTRAP_SERVERS_CONFIG] shouldBe KafkaConstant.BOOTSTRAP_SERVERS
+            }
+        }
     }
 
-    test("consumer value deserializer uses Kafka StringDeserializer") {
-        val config = buildConsumerConfig()
-        config[VALUE_DESERIALIZER_CLASS_CONFIG] shouldBe StringDeserializer::class.java.name
-    }
+    Given("KafkaConsumerConfig의 kafkaListenerContainerFactory가 생성되었을 때") {
+        val containerFactory = kafkaConsumerConfig.kafkaListenerContainerFactory()
 
-    test("StringDeserializer class name is org.apache.kafka.common.serialization.StringDeserializer") {
-        StringDeserializer::class.java.name shouldBe "org.apache.kafka.common.serialization.StringDeserializer"
-    }
+        When("ack mode를 조회하면") {
+            Then("BATCH 모드로 설정되어 있다") {
+                containerFactory.containerProperties.ackMode shouldBe ContainerProperties.AckMode.BATCH
+            }
+        }
 
-    test("consumer key and value deserializers are consistent") {
-        val config = buildConsumerConfig()
-        config[KEY_DESERIALIZER_CLASS_CONFIG] shouldBe config[VALUE_DESERIALIZER_CLASS_CONFIG]
-    }
+        When("ack mode가 MANUAL_IMMEDIATE인지 확인하면") {
+            Then("MANUAL_IMMEDIATE가 아니어서 unacknowledged message replay가 발생하지 않는다") {
+                containerFactory.containerProperties.ackMode shouldNotBe ContainerProperties.AckMode.MANUAL_IMMEDIATE
+            }
+        }
 
-    test("consumer auto offset reset is set to earliest") {
-        val config = buildConsumerConfig()
-        config[AUTO_OFFSET_RESET_CONFIG] shouldBe "earliest"
-    }
+        When("pollTimeout을 조회하면") {
+            Then("3000ms로 설정되어 있다") {
+                containerFactory.containerProperties.pollTimeout shouldBe 3000L
+            }
+        }
 
-    test("consumer max poll records is 10") {
-        val config = buildConsumerConfig()
-        config[MAX_POLL_RECORDS_CONFIG] shouldBe 10
-    }
-
-    test("consumer group id is set") {
-        val config = buildConsumerConfig()
-        config[GROUP_ID_CONFIG] shouldNotBe null
-        config[GROUP_ID_CONFIG] shouldBe KafkaConstant.Consumer.DEFAULT_GROUP_ID
-    }
-
-    test("consumer bootstrap servers is set") {
-        val config = buildConsumerConfig()
-        config[BOOTSTRAP_SERVERS_CONFIG] shouldBe KafkaConstant.BOOTSTRAP_SERVERS
-    }
-
-    test("ack mode BATCH does not require manual acknowledgment from listener") {
-        val batchMode = ContainerProperties.AckMode.BATCH
-        batchMode shouldBe ContainerProperties.AckMode.BATCH
-    }
-
-    test("ack mode BATCH is not MANUAL_IMMEDIATE to avoid unacknowledged message replay") {
-        val ackMode = ContainerProperties.AckMode.BATCH
-        ackMode shouldNotBe ContainerProperties.AckMode.MANUAL_IMMEDIATE
-    }
-
-    test("DefaultErrorHandler with FixedBackOff retries 3 times with 1000ms interval") {
-        val backOff = FixedBackOff(1000L, 3L)
-        backOff.interval shouldBe 1000L
-        backOff.maxAttempts shouldBe 3L
-    }
-
-    test("DefaultErrorHandler can be created with FixedBackOff") {
-        val errorHandler = DefaultErrorHandler(FixedBackOff(1000L, 3L))
-        errorHandler shouldNotBe null
-    }
-
-    test("pollTimeout is set to 3000ms") {
-        val pollTimeout = 3000L
-        pollTimeout shouldBe 3000L
+        When("errorHandler를 조회하면") {
+            Then("null이 아니다") {
+                containerFactory.commonErrorHandler shouldNotBe null
+            }
+        }
     }
 })
