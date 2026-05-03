@@ -38,7 +38,7 @@ class TestRepositoryCustomImpl(
         pageable: Pageable,
     ) =
         template.select<TestR2dbcEntity>()
-            .findAll(buildQuery(name, status))
+            .findAll(buildQuery(name, status), pageable)
 
     override suspend fun countAll(
         name: String?,
@@ -52,25 +52,20 @@ private fun buildQuery(
     name: String?,
     status: String?,
 ): Query {
-    var criteria: Criteria? = null
-    if (name != null) {
-        criteria = Criteria.where(TestR2dbcEntity::name.toDotPath()).`is`(name)
+    val criteria = buildList {
+        if (name != null) add(Criteria.where(TestR2dbcEntity::name.toDotPath()).`is`(name))
+        if (status != null) add(Criteria.where(TestR2dbcEntity::status.toDotPath()).`is`(status))
     }
-    if (status != null) {
-        criteria = if (criteria == null) {
-            Criteria.where(TestR2dbcEntity::status.toDotPath()).`is`(status)
-        } else {
-            criteria.and(TestR2dbcEntity::status.toDotPath()).`is`(status)
-        }
-    }
-    return if (criteria == null) Query.empty() else Query.query(criteria)
+    return if (criteria.isEmpty()) Query.empty()
+    else Query.query(criteria.reduce(Criteria::and))
 }
 
 private suspend fun <T> ReactiveSelectOperation.ReactiveSelect<T>.count(
     toQuery: Query,
 ): Long =
-    this.matching(toQuery).count().awaitSingleOrNull()!!
+    this.matching(toQuery).count().awaitSingleOrNull() ?: 0L
 
 fun <T : Any> ReactiveSelectOperation.ReactiveSelect<T>.findAll(
     predicate: Query,
-): Flow<T> = this.matching(predicate).all().asFlow()
+    pageable: Pageable,
+): Flow<T> = this.matching(predicate.with(pageable)).all().asFlow()
