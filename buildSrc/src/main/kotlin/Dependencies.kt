@@ -35,6 +35,7 @@ import DependencyVersions.SPRING_CLOUD_STARTER_GATEWAY_VERSION
 import DependencyVersions.SPRING_KAFKA_VERSION
 import DependencyVersions.SPRING_MOCKK_VERSION
 import DependencyVersions.SPRING_SECURITY_JWT_VERSION
+import DependencyVersions.TEST_CONTAINERS_VERSION
 import PluginVersions.KTOR_PLUGIN_VERSION
 import PluginVersions.SPRING_BOOT_VERSION
 
@@ -142,9 +143,9 @@ object Dependencies {
         const val KOTEST_EXTENSIONS_SPRING = "io.kotest.extensions:kotest-extensions-spring:$KOTEST_SPRING_EXTENSION_VERSION"
         const val RESTDOCS_WEBTESTCLIENT = "org.springframework.restdocs:spring-restdocs-webtestclient:$RESTDOCS_VERSION"
         const val REACTOR_TEST = "io.projectreactor:reactor-test"
-        const val TEST_CONTAINERS_POSTGRESQL = "org.testcontainers:postgresql"
-        const val TEST_CONTAINERS_R2DBC = "org.testcontainers:r2dbc"
-        const val TEST_CONTAINERS_JUNIT_JUPITER = "org.testcontainers:junit-jupiter"
+        const val TEST_CONTAINERS_POSTGRESQL = "org.testcontainers:postgresql:$TEST_CONTAINERS_VERSION"
+        const val TEST_CONTAINERS_R2DBC = "org.testcontainers:r2dbc:$TEST_CONTAINERS_VERSION"
+        const val TEST_CONTAINERS_JUNIT_JUPITER = "org.testcontainers:junit-jupiter:$TEST_CONTAINERS_VERSION"
         const val SPRING_MOCKK = "com.ninja-squad:springmockk:$SPRING_MOCKK_VERSION"
         const val KTOR_SERVER_TESTS_JVM = "io.ktor:ktor-server-tests-jvm"
         const val SPRING_TEST_CONTAINERS = "org.springframework.boot:spring-boot-testcontainers"

@@ -31,7 +31,7 @@ object DependencyVersions {
     const val SPRING_MOCKK_VERSION = "4.0.2"
     const val KOIN_KTOR_VERSION = "4.0.2"
     const val MINIO_VERSION = "8.5.10"
-    const val LETTUCE_VERSION = "6.4.0.RELEASE"
+    const val LETTUCE_VERSION = "6.3.2.RELEASE"
     const val KMONGO_VERSION = "5.1.0"
     const val KTORM_VERSION = "4.0.0"
     const val BCRYPT_VERSION = "0.10.2"
@@ -42,4 +42,5 @@ object DependencyVersions {
     const val JUNIT5_VERSION = "5.10.0"
     const val JUNIT_PLATFORM_LAUNCHER_VERSION = "1.10.0"
     const val KAFKA_CLIENTS_VERSION = "3.8.0"
+    const val TEST_CONTAINERS_VERSION = "1.20.1"
 }

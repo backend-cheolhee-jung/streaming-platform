@@ -40,6 +40,12 @@ dependencies {
 
     testImplementation(Test.KTOR_SERVER_TEST_HOST_JVM)
     testImplementation(Test.KOTLIN_TEST_JUNIT)
+    testImplementation(Test.KOTEST_RUNNER_JUNIT5)
+    testImplementation(Test.KOTEST_ASSERTIONS_CORE)
+    testImplementation(Test.TEST_CONTAINERS_POSTGRESQL)
+    testImplementation(Test.TEST_CONTAINERS_JUNIT_JUPITER)
+    testImplementation(Database.HIKARI_CP)
+    testImplementation(Database.POSTGRESQL)
 }
 
 java {
@@ -59,4 +65,8 @@ tasks.shadowJar {
 
 tasks.jar {
     enabled = false
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
