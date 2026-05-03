@@ -41,6 +41,7 @@ dependencies {
     implementation(Exposed.EXPOSED_R2DBC)
     implementation(Exposed.EXPOSED_JAVA_TIME)
     implementation(R2dbc.R2DBC_POSTGRESQL)
+    implementation(R2dbc.R2DBC_POOL)
     implementation(Coroutines.KOTLIN_COROUTINES_CORE)
 
     implementation(Security.BCRYPT)
