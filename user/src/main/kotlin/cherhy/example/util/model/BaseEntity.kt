@@ -6,6 +6,7 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.Query
 import org.jetbrains.exposed.sql.javatime.datetime
 import org.jetbrains.exposed.sql.vendors.ForUpdateOption
+import java.time.Instant
 import java.time.LocalDateTime
 
 abstract class BaseLongIdTable(

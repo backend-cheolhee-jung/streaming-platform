@@ -15,7 +15,9 @@ import DependencyVersions.KOIN_KTOR_VERSION
 import DependencyVersions.KOTEST_EXTENSIONS_TEST_CONTAINERS_VERSION
 import DependencyVersions.KOTEST_SPRING_EXTENSION_VERSION
 import DependencyVersions.KOTLIN_LOGGING_VERSION
+import DependencyVersions.JUNIT5_VERSION
 import DependencyVersions.KOTLIN_VERSION
+import DependencyVersions.KOTLINX_SERIALIZATION_JSON_VERSION
 import DependencyVersions.KTORM_VERSION
 import DependencyVersions.KTOR_EXTENSION_VERSION
 import DependencyVersions.LETTUCE_VERSION
@@ -41,7 +43,7 @@ object Dependencies {
         const val JACKSON_MODULE_KOTLIN = "com.fasterxml.jackson.module:jackson-module-kotlin"
         const val JACKSON_DATA_TYPE_JSR310 = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$JACKSON_DATA_TYPE_JSR310_VERSION"
         const val REACTOR_KOTLIN_EXTENSIONS = "io.projectreactor.kotlin:reactor-kotlin-extensions"
-        const val SERIALIZATION_JSON = "org.jetbrains.kotlinx:kotlinx-serialization-json:$KOTLIN_VERSION"
+        const val SERIALIZATION_JSON = "org.jetbrains.kotlinx:kotlinx-serialization-json:$KOTLINX_SERIALIZATION_JSON_VERSION"
     }
 
     object SpringBootStarters {
@@ -129,7 +131,8 @@ object Dependencies {
         const val KOTLIN_TEST_JUNIT = "org.jetbrains.kotlin:kotlin-test-junit:$KOTLIN_VERSION"
         const val KOTEST_RUNNER_JUNIT5 = "io.kotest:kotest-runner-junit5:$JUNIT_VERSION"
         const val KOTEST_ASSERTIONS_CORE = "io.kotest:kotest-assertions-core:$JUNIT_VERSION"
-        const val PLATFORM_LAUNCHER = "org.junit.platform:junit-platform-launcher"
+        const val PLATFORM_LAUNCHER = "org.junit.platform:junit-platform-launcher:1.10.0"
+        const val JUNIT_VINTAGE_ENGINE = "org.junit.vintage:junit-vintage-engine:$JUNIT5_VERSION"
         const val KOTEST_EXTENSIONS_TEST_CONTAINERS = "io.kotest.extensions:kotest-extensions-testcontainers:$KOTEST_EXTENSIONS_TEST_CONTAINERS_VERSION"
         const val KOTLIN_TEST_JUNIT5 = "org.jetbrains.kotlin:kotlin-test-junit5"
         const val SPRING_BOOT_STARTER_TEST = "org.springframework.boot:spring-boot-starter-test"
