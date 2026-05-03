@@ -16,6 +16,7 @@ import DependencyVersions.KMSL_VERSION
 import DependencyVersions.KOIN_KTOR_VERSION
 import DependencyVersions.KOTEST_EXTENSIONS_TEST_CONTAINERS_VERSION
 import DependencyVersions.KOTEST_SPRING_EXTENSION_VERSION
+import DependencyVersions.JUNIT5_VERSION
 import DependencyVersions.KOTLIN_LOGGING_VERSION
 import DependencyVersions.JUNIT5_VERSION
 import DependencyVersions.KOTLIN_VERSION

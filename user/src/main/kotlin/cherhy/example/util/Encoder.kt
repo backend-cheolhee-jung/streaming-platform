@@ -11,9 +11,9 @@ object Encoder {
     fun ifMatches(
         value: String,
         encoded: String,
-        block: () -> IllegalStateException = { throw IllegalStateException("Password does not match") }
+        block: () -> IllegalStateException = { IllegalStateException("Password does not match") },
     ) {
         val isMatched = BCrypt.verifyer().verify(value.toCharArray(), encoded).verified
-        if (isMatched.not()) block()
+        if (isMatched.not()) throw block()
     }
 }

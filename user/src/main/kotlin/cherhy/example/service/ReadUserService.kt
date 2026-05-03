@@ -12,7 +12,7 @@ class ReadUserService(
         block: () -> IllegalStateException = { IllegalStateException("User already exists") },
     ) =
         userRepository.isExists(email).let {
-            if (it) block()
+            if (it) throw block()
         }
 
     suspend fun get(
