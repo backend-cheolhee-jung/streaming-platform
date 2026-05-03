@@ -5,50 +5,53 @@ import com.cherhy.common.util.Stream.STREAM_DOMAIN
 import com.cherhy.common.util.User.DELETE_USER
 import com.cherhy.common.util.User.UPDATE_USER
 import com.cherhy.common.util.User.USER_DOMAIN
-import com.cherhy.gateway.jwt.JwtAuthenticationGlobalFilter
+import com.cherhy.gateway.security.JwtReactiveAuthenticationManager
+import com.cherhy.gateway.security.JwtTokenAuthenticationConverter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder
 import org.springframework.security.config.web.server.ServerHttpSecurity
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.web.server.SecurityWebFilterChain
+import org.springframework.security.web.server.authentication.AuthenticationWebFilter
 import org.springframework.web.cors.CorsConfiguration
 
 @Configuration
+@EnableWebFluxSecurity
 class SecurityConfig(
-    private val jwtAuthenticationGlobalFilter: JwtAuthenticationGlobalFilter,
+    private val jwtTokenAuthenticationConverter: JwtTokenAuthenticationConverter,
+    private val jwtReactiveAuthenticationManager: JwtReactiveAuthenticationManager,
 ) {
     @Bean
-    fun passwordEncoder(): BCryptPasswordEncoder {
-        return BCryptPasswordEncoder()
-    }
+    fun securityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
+        val authFilter = AuthenticationWebFilter(jwtReactiveAuthenticationManager).apply {
+            setServerAuthenticationConverter(jwtTokenAuthenticationConverter)
+        }
 
-    @Bean
-    fun securityFilterChain(
-        http: ServerHttpSecurity,
-    ) =
-        http
-            .addFilterBefore(jwtAuthenticationGlobalFilter, SecurityWebFiltersOrder.AUTHENTICATION)
-            .authorizeExchange { userDomain ->
-                userDomain.pathMatchers(HttpMethod.PUT, UPDATE_USER).authenticated()
-                userDomain.pathMatchers(HttpMethod.DELETE, DELETE_USER).authenticated()
-                userDomain.pathMatchers(USER_DOMAIN).permitAll()
-            }
-            .authorizeExchange { paymentDomain ->
-                paymentDomain.pathMatchers(PAYMENT_DOMAIN).authenticated()
-            }
-            .authorizeExchange { streamDomain ->
-                streamDomain.pathMatchers(STREAM_DOMAIN).authenticated()
+        return http
+            .addFilterAt(authFilter, SecurityWebFiltersOrder.AUTHENTICATION)
+            .authorizeExchange { spec ->
+                spec.pathMatchers(HttpMethod.PUT, UPDATE_USER).authenticated()
+                spec.pathMatchers(HttpMethod.DELETE, DELETE_USER).authenticated()
+                spec.pathMatchers(USER_DOMAIN).permitAll()
+                spec.pathMatchers(PAYMENT_DOMAIN).authenticated()
+                spec.pathMatchers(STREAM_DOMAIN).authenticated()
+                spec.anyExchange().permitAll()
             }
             .csrf { it.disable() }
-            .cors { it.configurationSource { corsConfigurationSource() } }
-            .build()!!
-
-    @Bean
-    fun corsConfigurationSource() = CorsConfiguration().apply {
-        allowCredentials = true
-        allowedHeaders = listOf("*")
-        allowedMethods = listOf("*")
-        allowedOrigins = listOf("*")
+            .httpBasic { it.disable() }
+            .formLogin { it.disable() }
+            .cors { cors ->
+                cors.configurationSource {
+                    CorsConfiguration().apply {
+                        allowCredentials = true
+                        allowedHeaders = listOf("*")
+                        allowedMethods = listOf("*")
+                        allowedOriginPatterns = listOf("*")
+                    }
+                }
+            }
+            .build()
     }
 }
