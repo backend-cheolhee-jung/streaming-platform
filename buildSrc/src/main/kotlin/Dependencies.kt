@@ -8,7 +8,9 @@ import DependencyVersions.FLYWAY_VERSION
 import DependencyVersions.HIKARI_CP_VERSION
 import DependencyVersions.JACKSON_DATA_TYPE_JSR310_VERSION
 import DependencyVersions.JASYPT_SPRING_BOOT_STARTER_VERSION
+import DependencyVersions.JUNIT_PLATFORM_LAUNCHER_VERSION
 import DependencyVersions.JUNIT_VERSION
+import DependencyVersions.KAFKA_CLIENTS_VERSION
 import DependencyVersions.KMONGO_VERSION
 import DependencyVersions.KMSL_VERSION
 import DependencyVersions.KOIN_KTOR_VERSION
@@ -132,7 +134,7 @@ object Dependencies {
         const val KOTLIN_TEST_JUNIT = "org.jetbrains.kotlin:kotlin-test-junit:$KOTLIN_VERSION"
         const val KOTEST_RUNNER_JUNIT5 = "io.kotest:kotest-runner-junit5:$JUNIT_VERSION"
         const val KOTEST_ASSERTIONS_CORE = "io.kotest:kotest-assertions-core:$JUNIT_VERSION"
-        const val PLATFORM_LAUNCHER = "org.junit.platform:junit-platform-launcher:1.10.0"
+        const val PLATFORM_LAUNCHER = "org.junit.platform:junit-platform-launcher:$JUNIT_PLATFORM_LAUNCHER_VERSION"
         const val JUNIT_VINTAGE_ENGINE = "org.junit.vintage:junit-vintage-engine:$JUNIT5_VERSION"
         const val KOTEST_EXTENSIONS_TEST_CONTAINERS = "io.kotest.extensions:kotest-extensions-testcontainers:$KOTEST_EXTENSIONS_TEST_CONTAINERS_VERSION"
         const val KOTLIN_TEST_JUNIT5 = "org.jetbrains.kotlin:kotlin-test-junit5"
@@ -157,7 +159,7 @@ object Dependencies {
 
     object Kafka {
         const val SPRING_KAFKA = "org.springframework.kafka:spring-kafka:$SPRING_KAFKA_VERSION"
-        const val KAFKA_CLIENTS = "org.apache.kafka:kafka-clients:3.8.0"
+        const val KAFKA_CLIENTS = "org.apache.kafka:kafka-clients:$KAFKA_CLIENTS_VERSION"
     }
 
     object Custom {
