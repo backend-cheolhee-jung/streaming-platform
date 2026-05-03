@@ -1,0 +1,17 @@
+server:
+  port: 0
+spring:
+  application:
+    name: gateway
+  threads:
+    virtual:
+      enabled: true
+domain:
+  payment-url: http://localhost:19191
+  stream-url: http://localhost:19192
+  user-url: http://localhost:19193
+jwt:
+  secret: test-secret-that-is-long-enough-for-hmac-256
+  expiration: 3600
+  refresh-expiration: 86400
+  algorithm: HmacSHA256

@@ -1,6 +1,6 @@
 services:
   postgres-master-container:
-    image: postgres:latest
+    image: postgres:16
     container_name: cherhy-master-postgres
     restart: always
     environment:
@@ -12,10 +12,10 @@ services:
       - ./third-party/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./third-party/postgres/master-data:/var/lib/postgresql/data
       - ./third-party/postgres/pg_hba.conf:/var/lib/postgresql/config/pg_hba.conf
-    command: ["postgres", "-c", "hba_file=/var/lib/postgresql/data/pg_hba.conf", "-c", "wal_level=replica", "-c", "max_wal_senders=3", "-c", "wal_keep_size=64MB", "-c", "hot_standby=on"]
+    command: ["postgres", "-c", "hba_file=/var/lib/postgresql/config/pg_hba.conf", "-c", "wal_level=replica", "-c", "max_wal_senders=3", "-c", "wal_keep_size=64MB", "-c", "hot_standby=on"]
 
   postgres-slave-container:
-    image: postgres:latest
+    image: postgres:16
     container_name: cherhy-slave-postgres
     restart: always
     environment:
@@ -31,7 +31,7 @@ services:
     volumes:
       - ./third-party/postgres/slave-data:/var/lib/postgresql/data
       - ./third-party/postgres/pg_hba.conf:/var/lib/postgresql/config/pg_hba.conf
-    command: ["postgres", "-c", "hba_file=/var/lib/postgresql/data/pg_hba.conf", "-c", "hot_standby=on"]
+    command: ["postgres", "-c", "hba_file=/var/lib/postgresql/config/pg_hba.conf", "-c", "hot_standby=on"]
 
   mongo-container:
     image: mongo:latest

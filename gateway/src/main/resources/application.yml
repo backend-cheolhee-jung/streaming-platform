@@ -12,7 +12,7 @@ domain:
   stream-url: http://localhost:10102
   user-url: http://localhost:10103
 jwt:
-  secret: secret
+  secret: streaming-platform-jwt-secret-key-2024
   expiration: 3600
   refresh-expiration: 86400
   algorithm: HmacSHA256
