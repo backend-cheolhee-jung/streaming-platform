@@ -31,6 +31,7 @@ subprojects {
         testRuntimeOnly(Dependencies.Test.PLATFORM_LAUNCHER)
         testRuntimeOnly(Dependencies.Test.JUNIT_VINTAGE_ENGINE)
         testImplementation(Dependencies.Test.KOTLIN_TEST_JUNIT)
+        testImplementation(Dependencies.Test.KOTEST_RUNNER_JUNIT5)
         testImplementation(Dependencies.Test.KOTEST_ASSERTIONS_CORE)
         testImplementation(Dependencies.Test.KOTEST_EXTENSIONS_TEST_CONTAINERS)
     }
