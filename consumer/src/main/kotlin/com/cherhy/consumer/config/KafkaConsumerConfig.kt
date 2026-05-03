@@ -35,6 +35,6 @@ class KafkaConsumerConfig {
         ConcurrentKafkaListenerContainerFactory<String, String>().apply {
             consumerFactory = consumerFactory()
             setConcurrency(3)
-            containerProperties.ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE
+            containerProperties.ackMode = ContainerProperties.AckMode.BATCH
         }
 }
