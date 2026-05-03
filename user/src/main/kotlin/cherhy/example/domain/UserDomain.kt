@@ -9,21 +9,7 @@ data class UserDomain(
     val password: UserPassword,
     val salt: UserSalt,
     var isDeleted: UserIsDeleted = UserIsDeleted.of(false),
-) {
-    companion object {
-        @JvmStatic
-        fun of(
-            user: User,
-        ) = UserDomain(
-            id = UserId.of(user.id.value),
-            name = Username.of(user.name),
-            email = UserEmail.of(user.email),
-            password = UserPassword.of(user.password),
-            salt = UserSalt.of(user.salt),
-            isDeleted = UserIsDeleted.of(user.isDeleted),
-        )
-    }
-}
+)
 
 @JvmInline
 value class Username private constructor(

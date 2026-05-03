@@ -1,8 +1,8 @@
 package cherhy.example.util
 
-import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.v1.r2dbc.R2dbcDatabase
 
 object DatabaseFactory {
-    lateinit var masterDatabase: Database
-    lateinit var slaveDatabase: Database
+    lateinit var masterDb: R2dbcDatabase
+    lateinit var slaveDb: R2dbcDatabase
 }

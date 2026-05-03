@@ -1,22 +1,19 @@
 package cherhy.example.domain
 
-import cherhy.example.util.model.BaseEntity
-import cherhy.example.util.model.BaseEntityClass
-import cherhy.example.util.model.BaseLongIdTable
-import org.jetbrains.exposed.dao.id.EntityID
+import com.cherhy.common.util.model.UserId
+import org.jetbrains.exposed.v1.core.ResultRow
+import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
+import org.jetbrains.exposed.v1.javatime.datetime
 
-object Authorities: BaseLongIdTable("authority", "id") {
+object Authorities : LongIdTable("authority", "id") {
     val role = varchar("role", 50)
-    val userId = reference("user_id", Users)
+    val userId = long("user_id")
+    val createdAt = datetime("created_at")
+    val updatedAt = datetime("updated_at")
 }
 
-class Authority(id: EntityID<AuthorityId>): BaseEntity(
-    id = id.unwrap(),
-    table = Authorities,
-) {
-    var role by Authorities.role
-    var userId by Authorities.userId
-    companion object: BaseEntityClass<Authority>(Authorities)
-}
-
-private fun EntityID<AuthorityId>.unwrap() = EntityID(value.value, Authorities)
+fun ResultRow.toAuthorityDomain() = AuthorityDomain(
+    id = AuthorityId.of(this[Authorities.id].value),
+    userId = UserId.of(this[Authorities.userId]),
+    role = Role.valueOf(this[Authorities.role]),
+)

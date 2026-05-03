@@ -13,13 +13,11 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.koin.ktor.ext.inject
+import org.koin.ktor.ext.getKoin
 
 fun Route.login() {
-    val loginUseCase by inject<LoginUseCase>()
-    val refreshTokenUseCase by inject<RefreshTokenUseCase>()
-
     post(LOGIN) {
+        val loginUseCase = call.application.getKoin().get<LoginUseCase>()
         val loginRequest = call.receive<LoginRequest>()
         val jwt = loginUseCase.execute(loginRequest.toCommand())
 
@@ -35,6 +33,7 @@ fun Route.login() {
     }
 
     post(REFRESH) {
+        val refreshTokenUseCase = call.application.getKoin().get<RefreshTokenUseCase>()
         val userId = call.request.headers.userId
         val accessToken = refreshTokenUseCase.execute(userId)
 

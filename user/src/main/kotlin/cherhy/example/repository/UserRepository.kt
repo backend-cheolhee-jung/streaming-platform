@@ -3,32 +3,20 @@ package cherhy.example.repository
 import cherhy.example.domain.*
 import cherhy.example.util.Encoder
 import com.cherhy.common.util.model.UserId
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.toList
+import org.jetbrains.exposed.v1.core.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.v1.javatime.CurrentDateTime
+import org.jetbrains.exposed.v1.r2dbc.insert
+import org.jetbrains.exposed.v1.r2dbc.selectAll
+import org.jetbrains.exposed.v1.r2dbc.update
 
 interface UserRepository {
-    suspend fun save(
-        email: UserEmail,
-        name: Username,
-        password: UserPassword,
-        salt: UserSalt,
-    ): User
-
-    suspend fun isExists(
-        email: UserEmail,
-    ): Boolean
-
-    suspend fun findOne(
-        email: UserEmail,
-    ): User?
-
-    suspend fun findOne(
-        userId: UserId,
-    ): User?
-
-    suspend fun save(
-        userId: UserId,
-        email: UserEmail,
-        password: UserPassword,
-    ): User?
+    suspend fun save(email: UserEmail, name: Username, password: UserPassword, salt: UserSalt): UserDomain
+    suspend fun isExists(email: UserEmail): Boolean
+    suspend fun findOne(email: UserEmail): UserDomain?
+    suspend fun findOne(userId: UserId): UserDomain?
+    suspend fun save(userId: UserId, email: UserEmail, password: UserPassword): UserDomain?
 }
 
 class UserRepositoryImpl : UserRepository {
@@ -37,40 +25,54 @@ class UserRepositoryImpl : UserRepository {
         name: Username,
         password: UserPassword,
         salt: UserSalt,
-    ) =
-        User.new {
-            this.email = email.value
-            this.name = name.value
-            this.password = password.value
-            this.salt = salt.value
-        }
+    ): UserDomain {
+        val id = Users.insert {
+            it[Users.name] = name.value
+            it[Users.email] = email.value
+            it[Users.password] = password.value
+            it[Users.salt] = salt.value
+            it[Users.isDeleted] = false
+            it[Users.createdAt] = java.time.LocalDateTime.now()
+            it[Users.updatedAt] = java.time.LocalDateTime.now()
+        }[Users.id]
+        return Users.selectAll().where { Users.id eq id }
+            .firstOrNull()
+            ?.toUserDomain()
+            ?: error("Failed to retrieve inserted user")
+    }
 
     override suspend fun save(
         userId: UserId,
         email: UserEmail,
         password: UserPassword,
-    ) =
-        User.findByIdAndUpdate(userId.value) {
-            val encodedPassword = Encoder.encode(password.value + it.salt)
-            it.email = email.value
-            it.password = encodedPassword
+    ): UserDomain? {
+        val existing = Users.selectAll().where { Users.id eq userId.value }
+            .firstOrNull()
+            ?.toUserDomain() ?: return null
+
+        val encodedPassword = Encoder.encode(password.value + existing.salt.value)
+
+        Users.update({ Users.id eq userId.value }) {
+            it[Users.email] = email.value
+            it[Users.password] = encodedPassword
+            it[Users.updatedAt] = java.time.LocalDateTime.now()
         }
 
-    override suspend fun isExists(
-        email: UserEmail,
-    ) =
-        User.find { Users.email eq email.value }
-            .empty()
-            .not()
-
-    override suspend fun findOne(
-        email: UserEmail
-    ) =
-        User.find { Users.email eq email.value }
+        return Users.selectAll().where { Users.id eq userId.value }
             .firstOrNull()
+            ?.toUserDomain()
+    }
 
-    override suspend fun findOne(
-        userId: UserId,
-    ) =
-        User.findById(userId.value)
+    override suspend fun isExists(email: UserEmail): Boolean =
+        Users.selectAll().where { Users.email eq email.value }.firstOrNull() != null
+
+    override suspend fun findOne(email: UserEmail): UserDomain? =
+        Users.selectAll().where { Users.email eq email.value }
+            .firstOrNull()
+            ?.toUserDomain()
+
+    override suspend fun findOne(userId: UserId): UserDomain? =
+        Users.selectAll().where { Users.id eq userId.value }
+            .firstOrNull()
+            ?.toUserDomain()
 }

@@ -6,20 +6,7 @@ data class AuthorityDomain(
     val id: AuthorityId,
     val userId: UserId,
     val role: Role,
-) {
-    companion object {
-        @JvmStatic
-        fun of(
-            authority: Authority,
-        ) = with(authority) {
-            AuthorityDomain(
-                id = AuthorityId.of(id.value),
-                userId = UserId.of(userId.value),
-                role = Role.valueOf(role),
-            )
-        }
-    }
-}
+)
 
 @JvmInline
 value class AuthorityId private constructor(
