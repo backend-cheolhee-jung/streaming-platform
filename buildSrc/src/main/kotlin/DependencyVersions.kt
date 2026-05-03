@@ -38,4 +38,6 @@ object DependencyVersions {
     const val REDISSON_VERSION = "3.40.2"
     const val KMSL_VERSION = "1.0.2"
     const val KTOR_EXTENSION_VERSION = "1.0.3"
+    const val KOTLINX_SERIALIZATION_JSON_VERSION = "1.7.3"
+    const val JUNIT5_VERSION = "5.10.0"
 }
