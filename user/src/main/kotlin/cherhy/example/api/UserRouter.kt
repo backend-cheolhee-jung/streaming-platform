@@ -17,13 +17,15 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.koin.ktor.ext.getKoin
+import org.koin.ktor.ext.inject
 
 fun Route.user() {
-    post(SIGN_UP) {
-        val signUpUseCase = call.application.getKoin().get<SignUpUseCase>()
-        val loginUseCase = call.application.getKoin().get<LoginUseCase>()
+    val signUpUseCase by inject<SignUpUseCase>()
+    val loginUseCase by inject<LoginUseCase>()
+    val readUserService by inject<ReadUserService>()
+    val writeUserService by inject<WriteUserService>()
 
+    post(SIGN_UP) {
         val request = call.receive<SignUpRequest>()
         val signUpCommand = request.toCommand()
         signUpUseCase.execute(signUpCommand)
@@ -37,14 +39,12 @@ fun Route.user() {
     }
 
     get(GET_ME) {
-        val readUserService = call.application.getKoin().get<ReadUserService>()
         val userId = call.jwt.userId
         val user = readUserService.get(userId)
         call.respond(HttpStatusCode.OK, user)
     }
 
     put(UPDATE_USER) {
-        val writeUserService = call.application.getKoin().get<WriteUserService>()
         val userId = call.jwt.userId
         val request = call.receive<UserUpdateRequest>()
         val userUpdateCommand = request.toCommand()

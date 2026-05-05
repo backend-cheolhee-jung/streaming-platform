@@ -6,7 +6,7 @@ object Encoder {
     fun encode(
         value: String,
     ) = BCrypt.withDefaults().hashToString(12, value.toCharArray())
-        ?: error("BCrypt hashing returned null")
+        ?: throw IllegalStateException("BCrypt encoding returned null")
 
     fun ifMatches(
         value: String,
