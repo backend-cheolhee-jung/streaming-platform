@@ -16,10 +16,10 @@ import io.ktor.server.application.*
 import org.jetbrains.exposed.v1.r2dbc.R2dbcDatabase
 
 fun Application.configureDatabase() {
-    DatabaseFactory.masterDb = R2dbcDatabase.connect(
+    DatabaseFactory.masterDatabase = R2dbcDatabase.connect(
         connectionFactory = buildConnectionPool(MASTER),
     )
-    DatabaseFactory.slaveDb = R2dbcDatabase.connect(
+    DatabaseFactory.slaveDatabase = R2dbcDatabase.connect(
         connectionFactory = buildConnectionPool(SLAVE),
     )
 }
