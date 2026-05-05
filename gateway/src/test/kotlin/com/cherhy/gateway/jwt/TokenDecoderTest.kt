@@ -8,14 +8,14 @@ import com.nimbusds.jose.crypto.MACSigner
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.spec.style.StringSpec
+import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import java.util.*
 import javax.crypto.spec.SecretKeySpec
 
 private const val TEST_SECRET = "test-secret-that-is-long-enough-for-hmac"
 
-class TokenDecoderTest : StringSpec({
+class TokenDecoderTest : FunSpec({
     val jwtProperty = JwtProperty(
         secret = TEST_SECRET,
         expiration = 3600,
@@ -24,36 +24,36 @@ class TokenDecoderTest : StringSpec({
     )
     val tokenDecoder = TokenDecoder(jwtProperty).also { it.afterPropertiesSet() }
 
-    "decodes user-id claim as Long" {
+    test("decodes user-id claim as Long") {
         val token = buildToken(userId = 42L)
         val principal: GatewayUserPrincipal = tokenDecoder.decode(token)
         principal.userId shouldBe 42L
     }
 
-    "decodes username claim" {
+    test("decodes username claim") {
         val token = buildToken(username = "alice")
         val principal: GatewayUserPrincipal = tokenDecoder.decode(token)
         principal.username shouldBe "alice"
     }
 
-    "decodes single role" {
+    test("decodes single role") {
         val token = buildToken(role = "UNPAID_MEMBER")
         val principal: GatewayUserPrincipal = tokenDecoder.decode(token)
         principal.roles shouldBe listOf("UNPAID_MEMBER")
     }
 
-    "decodes multiple roles joined by comma" {
+    test("decodes multiple roles joined by comma") {
         val token = buildToken(role = "ADMIN,PAID_MEMBER")
         val principal: GatewayUserPrincipal = tokenDecoder.decode(token)
         principal.roles shouldBe listOf("ADMIN", "PAID_MEMBER")
     }
 
-    "throws for expired token" {
+    test("throws for expired token") {
         val token = buildToken(expiresAt = Date(System.currentTimeMillis() - 1000))
         shouldThrow<RuntimeException> { tokenDecoder.decode(token) }
     }
 
-    "throws for token signed with wrong secret" {
+    test("throws for token signed with wrong secret") {
         val token = buildToken(secret = "wrong-secret-that-is-also-long-enough!!")
         shouldThrow<RuntimeException> { tokenDecoder.decode(token) }
     }

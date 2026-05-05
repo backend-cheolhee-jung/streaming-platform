@@ -7,7 +7,7 @@ import com.nimbusds.jose.JWSHeader
 import com.nimbusds.jose.crypto.MACSigner
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
-import io.kotest.core.spec.style.StringSpec
+import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -17,7 +17,7 @@ import javax.crypto.spec.SecretKeySpec
 
 private const val TEST_SECRET = "test-secret-that-is-long-enough-for-hmac"
 
-class JwtReactiveAuthenticationManagerTest : StringSpec({
+class JwtReactiveAuthenticationManagerTest : FunSpec({
     val jwtProperty = JwtProperty(
         secret = TEST_SECRET,
         expiration = 3600,
@@ -27,7 +27,7 @@ class JwtReactiveAuthenticationManagerTest : StringSpec({
     val tokenDecoder = TokenDecoder(jwtProperty).also { it.afterPropertiesSet() }
     val manager = JwtReactiveAuthenticationManager(tokenDecoder)
 
-    "authenticates valid token and returns JwtAuthenticationToken" {
+    test("authenticates valid token and returns JwtAuthenticationToken") {
         val token = buildToken(userId = 7L, username = "bob", role = "ADMIN")
         val input = UsernamePasswordAuthenticationToken(token, token)
 
@@ -43,7 +43,7 @@ class JwtReactiveAuthenticationManagerTest : StringSpec({
             .verifyComplete()
     }
 
-    "emits error for invalid token" {
+    test("emits error for invalid token") {
         val badToken = "not.a.valid.jwt"
         val input = UsernamePasswordAuthenticationToken(badToken, badToken)
 

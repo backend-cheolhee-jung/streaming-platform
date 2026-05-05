@@ -23,16 +23,7 @@ class TokenDecoder(
     }
 
     fun decode(token: String): GatewayUserPrincipal {
-        val claims = extractClaims(token)
-        val userId = claims.getLongClaim("user-id")
-        val username = claims.getStringClaim("username")
-        val role = claims.getStringClaim("role")
-        val roles = role.split(",")
-        return GatewayUserPrincipal(userId, username, roles)
-    }
-
-    private fun extractClaims(token: String) =
-        try {
+        val claims = try {
             val signedJWT = SignedJWT.parse(token)
             val verifier = MACVerifier(key)
             check(signedJWT.verify(verifier)) { "JWT 서명 검증 실패" }
@@ -50,4 +41,9 @@ class TokenDecoder(
             log.info { "JWT 처리 오류: $e" }
             error("JWT 토큰이 잘못 되었습니다.")
         }
+        val userId = claims.getLongClaim("user-id")
+        val username = claims.getStringClaim("username")
+        val roles = claims.getStringClaim("role").split(",")
+        return GatewayUserPrincipal(userId, username, roles)
+    }
 }
