@@ -1,0 +1,4 @@
+domain:
+  payment-url: http://payment:10101
+  stream-url: http://stream:10102
+  user-url: http://user:10103
