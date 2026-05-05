@@ -11,14 +11,13 @@ import com.cherhy.usecase.DeletePostUseCase
 import com.cherhy.usecase.GetPostUseCase
 import com.cherhy.usecase.UpdatePostUseCase
 import com.cherhy.util.extension.getQueryParams
-import com.cherhy.util.extension.getVideo
+import com.cherhy.util.extension.getVideoWithFields
 import com.cherhy.util.extension.pathParameter
 import com.cherhy.util.extension.userId
 import io.ktor.http.HttpStatusCode.Companion.Created
 import io.ktor.http.HttpStatusCode.Companion.NoContent
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.server.application.*
-import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
@@ -46,8 +45,12 @@ fun Route.post() {
 
     post(CREATE_POST) {
         val userId = call.request.userId
-        val video = call.getVideo()
-        val post = call.receive<CreatePostRequest>()
+        val (video, fields) = call.getVideoWithFields()
+        val post = CreatePostRequest(
+            title = fields["title"] ?: throw IllegalArgumentException("title is required"),
+            content = fields["content"] ?: throw IllegalArgumentException("content is required"),
+            category = fields["category"] ?: throw IllegalArgumentException("category is required"),
+        )
         createPostUseCase.execute(userId, video, post.toCommand())
         call.respond(Created)
     }
@@ -55,8 +58,12 @@ fun Route.post() {
     put(UPDATE_POST) {
         val userId = call.request.userId
         val postId = call.pathParameter.postId
-        val video = call.getVideo()
-        val post = call.receive<UpdatePostRequest>()
+        val (video, fields) = call.getVideoWithFields()
+        val post = UpdatePostRequest(
+            title = fields["title"] ?: throw IllegalArgumentException("title is required"),
+            content = fields["content"] ?: throw IllegalArgumentException("content is required"),
+            category = fields["category"] ?: throw IllegalArgumentException("category is required"),
+        )
         updatePostUseCase.execute(userId, postId, video, post.toCommand())
         call.respond(OK)
     }

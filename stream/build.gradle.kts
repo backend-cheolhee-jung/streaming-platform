@@ -58,6 +58,8 @@ dependencies {
 	testImplementation(Test.KOTEST_ASSERTIONS_CORE)
 	testImplementation(Test.TEST_CONTAINERS_POSTGRESQL)
 	testImplementation(Test.TEST_CONTAINERS_JUNIT_JUPITER)
+	testImplementation(Test.TEST_CONTAINERS_MONGODB)
+	testImplementation(Test.KTOR_SERVER_TEST_HOST_JVM)
 	testImplementation(Database.POSTGRESQL)
 }
 

@@ -147,6 +147,7 @@ object Dependencies {
         const val TEST_CONTAINERS_POSTGRESQL = "org.testcontainers:postgresql:$TEST_CONTAINERS_VERSION"
         const val TEST_CONTAINERS_R2DBC = "org.testcontainers:r2dbc:$TEST_CONTAINERS_VERSION"
         const val TEST_CONTAINERS_JUNIT_JUPITER = "org.testcontainers:junit-jupiter:$TEST_CONTAINERS_VERSION"
+        const val TEST_CONTAINERS_MONGODB = "org.testcontainers:mongodb:$TEST_CONTAINERS_VERSION"
         const val SPRING_MOCKK = "com.ninja-squad:springmockk:$SPRING_MOCKK_VERSION"
         const val KTOR_SERVER_TESTS_JVM = "io.ktor:ktor-server-tests-jvm"
         const val SPRING_TEST_CONTAINERS = "org.springframework.boot:spring-boot-testcontainers"
