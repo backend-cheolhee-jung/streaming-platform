@@ -1,12 +1,24 @@
 package cherhy.example.domain
 
 import com.cherhy.common.util.model.UserId
+import org.jetbrains.exposed.v1.core.ResultRow
 
 data class AuthorityDomain(
     val id: AuthorityId,
     val userId: UserId,
     val role: Role,
-)
+) {
+    companion object {
+        @JvmStatic
+        fun of(
+            row: ResultRow,
+        ) = AuthorityDomain(
+            id = AuthorityId.of(row[Authorities.id].value),
+            userId = UserId.of(row[Authorities.userId]),
+            role = Role.valueOf(row[Authorities.role]),
+        )
+    }
+}
 
 @JvmInline
 value class AuthorityId private constructor(

@@ -40,7 +40,8 @@ class JwtManager {
                     )
                 }
             }
-            .sign(Algorithm.HMAC256(secret))!!
+            .sign(Algorithm.HMAC256(secret))
+            ?: error("JWT signing returned null")
 
     companion object {
         @JvmStatic

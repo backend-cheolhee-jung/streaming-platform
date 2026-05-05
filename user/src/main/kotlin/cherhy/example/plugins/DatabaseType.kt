@@ -17,30 +17,33 @@ import org.jetbrains.exposed.v1.r2dbc.R2dbcDatabase
 
 fun Application.configureDatabase() {
     DatabaseFactory.masterDatabase = R2dbcDatabase.connect(
-        connectionFactory = buildConnectionPool(MASTER),
+        connectionFactory = ConnectionPool(
+            ConnectionPoolConfiguration.builder(
+                ConnectionFactories.get(
+                    ConnectionFactoryOptions.parse(getDataSource(MASTER, URL))
+                        .mutate()
+                        .option(ConnectionFactoryOptions.USER, getDataSource(MASTER, USERNAME))
+                        .option(ConnectionFactoryOptions.PASSWORD, getDataSource(MASTER, PASSWORD))
+                        .build()
+                )
+            )
+                .maxSize(getDataSource(MASTER, MAX_POOL_SIZE).toInt())
+                .build()
+        ),
     )
     DatabaseFactory.slaveDatabase = R2dbcDatabase.connect(
-        connectionFactory = buildConnectionPool(SLAVE),
+        connectionFactory = ConnectionPool(
+            ConnectionPoolConfiguration.builder(
+                ConnectionFactories.get(
+                    ConnectionFactoryOptions.parse(getDataSource(SLAVE, URL))
+                        .mutate()
+                        .option(ConnectionFactoryOptions.USER, getDataSource(SLAVE, USERNAME))
+                        .option(ConnectionFactoryOptions.PASSWORD, getDataSource(SLAVE, PASSWORD))
+                        .build()
+                )
+            )
+                .maxSize(getDataSource(SLAVE, MAX_POOL_SIZE).toInt())
+                .build()
+        ),
     )
-}
-
-private fun buildConnectionPool(dataSourceType: cherhy.example.util.DataSourceType): ConnectionPool {
-    val url = getDataSource(dataSourceType, URL)
-    val user = getDataSource(dataSourceType, USERNAME)
-    val password = getDataSource(dataSourceType, PASSWORD)
-    val maxPoolSize = getDataSource(dataSourceType, MAX_POOL_SIZE).toInt()
-
-    val connectionFactory = ConnectionFactories.get(
-        ConnectionFactoryOptions.parse(url)
-            .mutate()
-            .option(ConnectionFactoryOptions.USER, user)
-            .option(ConnectionFactoryOptions.PASSWORD, password)
-            .build()
-    )
-
-    val poolConfig = ConnectionPoolConfiguration.builder(connectionFactory)
-        .maxSize(maxPoolSize)
-        .build()
-
-    return ConnectionPool(poolConfig)
 }

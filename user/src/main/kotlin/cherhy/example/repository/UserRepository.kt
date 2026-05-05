@@ -4,19 +4,36 @@ import cherhy.example.domain.*
 import cherhy.example.util.Encoder
 import com.cherhy.common.util.model.UserId
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.toList
 import org.jetbrains.exposed.v1.core.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.v1.javatime.CurrentDateTime
 import org.jetbrains.exposed.v1.r2dbc.insert
 import org.jetbrains.exposed.v1.r2dbc.selectAll
 import org.jetbrains.exposed.v1.r2dbc.update
 
 interface UserRepository {
-    suspend fun save(email: UserEmail, name: Username, password: UserPassword, salt: UserSalt): UserDomain
-    suspend fun isExists(email: UserEmail): Boolean
-    suspend fun findOne(email: UserEmail): UserDomain?
-    suspend fun findOne(userId: UserId): UserDomain?
-    suspend fun save(userId: UserId, email: UserEmail, password: UserPassword): UserDomain?
+    suspend fun save(
+        email: UserEmail,
+        name: Username,
+        password: UserPassword,
+        salt: UserSalt,
+    ): UserDomain
+
+    suspend fun isExists(
+        email: UserEmail,
+    ): Boolean
+
+    suspend fun findOne(
+        email: UserEmail,
+    ): UserDomain?
+
+    suspend fun findOne(
+        userId: UserId,
+    ): UserDomain?
+
+    suspend fun save(
+        userId: UserId,
+        email: UserEmail,
+        password: UserPassword,
+    ): UserDomain?
 }
 
 class UserRepositoryImpl : UserRepository {
@@ -37,7 +54,7 @@ class UserRepositoryImpl : UserRepository {
         }[Users.id]
         return Users.selectAll().where { Users.id eq id }
             .firstOrNull()
-            ?.toUserDomain()
+            ?.let(UserDomain::of)
             ?: error("Failed to retrieve inserted user")
     }
 
@@ -48,7 +65,7 @@ class UserRepositoryImpl : UserRepository {
     ): UserDomain? {
         val existing = Users.selectAll().where { Users.id eq userId.value }
             .firstOrNull()
-            ?.toUserDomain() ?: return null
+            ?.let(UserDomain::of) ?: return null
 
         val encodedPassword = Encoder.encode(password.value + existing.salt.value)
 
@@ -60,7 +77,7 @@ class UserRepositoryImpl : UserRepository {
 
         return Users.selectAll().where { Users.id eq userId.value }
             .firstOrNull()
-            ?.toUserDomain()
+            ?.let(UserDomain::of)
     }
 
     override suspend fun isExists(email: UserEmail): Boolean =
@@ -69,10 +86,10 @@ class UserRepositoryImpl : UserRepository {
     override suspend fun findOne(email: UserEmail): UserDomain? =
         Users.selectAll().where { Users.email eq email.value }
             .firstOrNull()
-            ?.toUserDomain()
+            ?.let(UserDomain::of)
 
     override suspend fun findOne(userId: UserId): UserDomain? =
         Users.selectAll().where { Users.id eq userId.value }
             .firstOrNull()
-            ?.toUserDomain()
+            ?.let(UserDomain::of)
 }

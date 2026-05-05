@@ -3,7 +3,6 @@ package cherhy.example.repository
 import cherhy.example.domain.Authorities
 import cherhy.example.domain.AuthorityDomain
 import cherhy.example.domain.Role
-import cherhy.example.domain.toAuthorityDomain
 import com.cherhy.common.util.model.UserId
 import kotlinx.coroutines.flow.toList
 import org.jetbrains.exposed.v1.core.SqlExpressionBuilder.eq
@@ -11,12 +10,21 @@ import org.jetbrains.exposed.v1.r2dbc.insert
 import org.jetbrains.exposed.v1.r2dbc.selectAll
 
 interface AuthorityRepository {
-    suspend fun save(id: UserId, role: Role): AuthorityDomain
-    suspend fun findOne(userId: UserId): List<AuthorityDomain>
+    suspend fun save(
+        id: UserId,
+        role: Role,
+    ): AuthorityDomain
+
+    suspend fun findOne(
+        userId: UserId,
+    ): List<AuthorityDomain>
 }
 
 class AuthorityRepositoryImpl : AuthorityRepository {
-    override suspend fun save(id: UserId, role: Role): AuthorityDomain {
+    override suspend fun save(
+        id: UserId,
+        role: Role,
+    ): AuthorityDomain {
         val rowId = Authorities.insert {
             it[Authorities.role] = role.name
             it[Authorities.userId] = id.value
@@ -26,11 +34,11 @@ class AuthorityRepositoryImpl : AuthorityRepository {
         return Authorities.selectAll().where { Authorities.id eq rowId }
             .toList()
             .single()
-            .toAuthorityDomain()
+            .let(AuthorityDomain::of)
     }
 
     override suspend fun findOne(userId: UserId): List<AuthorityDomain> =
         Authorities.selectAll().where { Authorities.userId eq userId.value }
             .toList()
-            .map { it.toAuthorityDomain() }
+            .map(AuthorityDomain::of)
 }
