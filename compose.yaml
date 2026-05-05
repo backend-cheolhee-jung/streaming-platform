@@ -8,6 +8,8 @@ services:
       POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
+    networks:
+      - cherhy-network
     volumes:
       - ./third-party/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./third-party/postgres/master-data:/var/lib/postgresql/data
@@ -26,6 +28,8 @@ services:
       POSTGRES_MASTER_SERVICE_PORT: 5432
     ports:
       - "5433:5432"
+    networks:
+      - cherhy-network
     depends_on:
       - postgres-master-container
     volumes:
@@ -38,6 +42,8 @@ services:
     container_name: cherhy-mongo
     ports:
       - "27017:27017"
+    networks:
+      - cherhy-network
     volumes:
       - ./third-party/mongo/data:/data/db
     restart: always
@@ -47,6 +53,8 @@ services:
     container_name: cherhy-redis
     ports:
       - "6379:6379"
+    networks:
+      - cherhy-network
     volumes:
       - ./third-party/redis/data:/data
       - ./third-party/redis/conf/redis.conf:/usr/local/conf/redis.conf
@@ -62,6 +70,8 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
     ports:
       - '2181:2181'
+    networks:
+      - cherhy-network
 
   kafka:
     image: 'confluentinc/cp-kafka:latest'
@@ -69,6 +79,8 @@ services:
       - zookeeper
     ports:
       - "9092:9092"
+    networks:
+      - cherhy-network
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -112,7 +124,13 @@ services:
       context: ./gateway
       dockerfile: Dockerfile
     ports:
-      - "10100:8080"
+      - "10100:10100"
+    networks:
+      - cherhy-network
+    depends_on:
+      - user
+      - payment
+      - stream
 
   payment:
     container_name: payment
@@ -120,14 +138,15 @@ services:
       context: ./payment
       dockerfile: Dockerfile
     ports:
-      - "10101:8080"
+      - "10101:10101"
+    networks:
+      - cherhy-network
     depends_on:
       - postgres-master-container
       - postgres-slave-container
       - mongo-container
       - redis-container
       - axon-server
-      - gateway
 
   stream:
     container_name: stream
@@ -135,16 +154,16 @@ services:
       context: ./stream
       dockerfile: Dockerfile
     ports:
-      - "10102:8080"
+      - "10102:10102"
+    networks:
+      - cherhy-network
     environment:
       - PORT=10102
     depends_on:
       - postgres-master-container
       - postgres-slave-container
-      - mongo-container
       - redis-container
-      - axon-server
-      - gateway
+      - kafka
 
   user:
     container_name: user
@@ -152,14 +171,12 @@ services:
       context: ./user
       dockerfile: Dockerfile
     ports:
-      - "10103:8080"
+      - "10103:10103"
+    networks:
+      - cherhy-network
     depends_on:
       - postgres-master-container
       - postgres-slave-container
-      - mongo-container
-      - redis-container
-      - axon-server
-      - gateway
 
   schedule:
     container_name: schedule
@@ -167,8 +184,11 @@ services:
       context: ./schedule
       dockerfile: Dockerfile
     ports:
-        - "10104:8080"
+      - "10104:10104"
+    networks:
+      - cherhy-network
     depends_on:
+      - postgres-master-container
         - postgres-master-container
         - postgres-slave-container
         - mongo-container
