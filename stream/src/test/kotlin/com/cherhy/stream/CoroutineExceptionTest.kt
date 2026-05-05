@@ -14,7 +14,18 @@ class CoroutineExceptionTest : FunSpec({
         runBlocking {
             coroutineScope {
                 launch {
-                    shouldThrow<Exception> { childScope { count++ } }
+                    shouldThrow<Exception> {
+                        coroutineScope {
+                            val failed = launch {
+                                coroutineScope { launch { throw Exception("Exception") } }
+                            }
+                            val success = launch {
+                                delay(100)
+                                coroutineScope { launch { count++ } }
+                            }
+                            joinAll(success, failed)
+                        }
+                    }
                 }
             }
         }
@@ -27,12 +38,15 @@ class CoroutineExceptionTest : FunSpec({
 
         shouldThrow<Exception> {
             runBlocking {
-                launch(exceptionHandler()) {
-                    throwException()
+                launch(CoroutineExceptionHandler { coroutineContext, throwable ->
+                    println("CoroutineContext: $coroutineContext")
+                    println("Exception: $throwable")
+                }) {
+                    coroutineScope { launch { throw Exception("Exception") } }
                 }
                 launch {
                     delay(100)
-                    success { count++ }
+                    coroutineScope { launch { count++ } }
                 }
             }
         }
@@ -45,48 +59,14 @@ class CoroutineExceptionTest : FunSpec({
 
         supervisorScope {
             launch {
-                throwException()
+                coroutineScope { launch { throw Exception("Exception") } }
             }
             launch {
                 delay(100)
-                success { count++ }
+                coroutineScope { launch { count++ } }
             }
         }
 
         count shouldBe 1
     }
 })
-
-private suspend fun throwException() {
-    coroutineScope {
-        launch { throw Exception("Exception") }
-    }
-}
-
-private suspend fun success(
-    block: suspend () -> Unit,
-) {
-    coroutineScope {
-        launch { block.invoke() }
-    }
-}
-
-private suspend fun childScope(
-    block: suspend () -> Unit,
-) {
-    coroutineScope {
-        val failed = launch { throwException() }
-        val success = launch {
-            delay(100)
-            block.invoke()
-        }
-
-        joinAll(success, failed)
-    }
-}
-
-private fun exceptionHandler() =
-    CoroutineExceptionHandler { coroutineContext, throwable ->
-        println("CoroutineContext: $coroutineContext")
-        println("Exception: $throwable")
-    }

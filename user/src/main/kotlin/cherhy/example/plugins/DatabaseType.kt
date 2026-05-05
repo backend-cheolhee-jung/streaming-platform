@@ -11,12 +11,12 @@ import io.ktor.server.application.*
 import org.jetbrains.exposed.v1.r2dbc.R2dbcDatabase
 
 fun Application.configureDatabase() {
-    DatabaseFactory.masterDb = R2dbcDatabase.connect(
+    DatabaseFactory.masterDatabase = R2dbcDatabase.connect(
         url = getDataSource(MASTER, URL),
         user = getDataSource(MASTER, USERNAME),
         password = getDataSource(MASTER, PASSWORD),
     )
-    DatabaseFactory.slaveDb = R2dbcDatabase.connect(
+    DatabaseFactory.slaveDatabase = R2dbcDatabase.connect(
         url = getDataSource(SLAVE, URL),
         user = getDataSource(SLAVE, USERNAME),
         password = getDataSource(SLAVE, PASSWORD),

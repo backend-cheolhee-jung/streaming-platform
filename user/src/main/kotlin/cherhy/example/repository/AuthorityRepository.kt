@@ -3,7 +3,6 @@ package cherhy.example.repository
 import cherhy.example.domain.Authorities
 import cherhy.example.domain.AuthorityDomain
 import cherhy.example.domain.Role
-import cherhy.example.domain.toAuthorityDomain
 import com.cherhy.common.util.model.UserId
 import kotlinx.coroutines.flow.toList
 import org.jetbrains.exposed.v1.core.SqlExpressionBuilder.eq
@@ -26,11 +25,11 @@ class AuthorityRepositoryImpl : AuthorityRepository {
         return Authorities.selectAll().where { Authorities.id eq rowId }
             .toList()
             .single()
-            .toAuthorityDomain()
+            .let(AuthorityDomain::of)
     }
 
     override suspend fun findOne(userId: UserId): List<AuthorityDomain> =
         Authorities.selectAll().where { Authorities.userId eq userId.value }
             .toList()
-            .map { it.toAuthorityDomain() }
+            .map(AuthorityDomain::of)
 }

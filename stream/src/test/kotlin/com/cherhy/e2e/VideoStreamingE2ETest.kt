@@ -59,7 +59,7 @@ class VideoStreamingE2ETest : FunSpec({
             uploadResponse.status shouldBe HttpStatusCode.Created
 
             // Step 2: Verify metadata persisted in PostgreSQL and retrieve IDs
-            val (postId, videoId) = queryIds(userId)
+            val (postId, videoId) = VideoStreamingE2ETest.queryIds(userId)
             postId shouldNotBe 0L
             videoId shouldNotBe 0L
 
@@ -106,7 +106,7 @@ class VideoStreamingE2ETest : FunSpec({
             }
             uploadResp.status shouldBe HttpStatusCode.Created
 
-            val (postId, videoId) = queryIds(userId)
+            val (postId, videoId) = VideoStreamingE2ETest.queryIds(userId)
 
             // Request from byte offset 10
             val rangeResponse = client.get("/streams/posts/$postId/videos/$videoId") {
@@ -184,35 +184,30 @@ class VideoStreamingE2ETest : FunSpec({
                 conn.createStatement().execute(TestDatabase.ddl)
             }
 
-            setupMinioBucket()
-        }
-
-        private fun setupMinioBucket() {
-            val client = MinioClient.builder()
+            val minioClient = MinioClient.builder()
                 .endpoint("http://$minioHost:$minioPort")
                 .credentials("test-access-key", "test-secret-key")
                 .build()
-
             val bucketName = "e2e-test-bucket"
-            if (!client.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build())) {
-                client.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build())
+            if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build())) {
+                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build())
             }
         }
+
+        fun queryIds(userId: Long): Pair<Long, Long> =
+            verifyDb.useConnection { conn ->
+                val rs = conn.createStatement().executeQuery(
+                    """
+                    SELECT p.id AS post_id, v.id AS video_id
+                    FROM post p
+                    JOIN video v ON v.post = p.id
+                    WHERE p.author = $userId
+                    ORDER BY p.id DESC
+                    LIMIT 1
+                    """.trimIndent()
+                )
+                check(rs.next()) { "No post/video found for userId=$userId after upload" }
+                Pair(rs.getLong("post_id"), rs.getLong("video_id"))
+            }
     }
 }
-
-private fun VideoStreamingE2ETest.Companion.queryIds(userId: Long): Pair<Long, Long> =
-    verifyDb.useConnection { conn ->
-        val rs = conn.createStatement().executeQuery(
-            """
-            SELECT p.id AS post_id, v.id AS video_id
-            FROM post p
-            JOIN video v ON v.post = p.id
-            WHERE p.author = $userId
-            ORDER BY p.id DESC
-            LIMIT 1
-            """.trimIndent()
-        )
-        check(rs.next()) { "No post/video found for userId=$userId after upload" }
-        Pair(rs.getLong("post_id"), rs.getLong("video_id"))
-    }

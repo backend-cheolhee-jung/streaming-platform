@@ -62,7 +62,7 @@ value class VideoId(
     }
 }
 
-fun Any.toVideoId() = this as VideoId
+fun Any.toVideoId() = VideoId.of(this as Long)
 
 @JvmInline
 value class VideoSize(
