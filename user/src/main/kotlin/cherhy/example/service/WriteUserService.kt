@@ -14,14 +14,12 @@ class WriteUserService(
         salt: UserSalt,
     ) =
         userRepository.save(email, name, password, salt)
-            .let(UserDomain::of)
 
     suspend fun update(
         userId: UserId,
         command: UserUpdateCommand,
     ) =
         userRepository.save(userId, command.email, command.password)
-            ?.let(UserDomain::of)
             ?: throw IllegalArgumentException("User not found")
 }
 

@@ -8,14 +8,18 @@ import DependencyVersions.FLYWAY_VERSION
 import DependencyVersions.HIKARI_CP_VERSION
 import DependencyVersions.JACKSON_DATA_TYPE_JSR310_VERSION
 import DependencyVersions.JASYPT_SPRING_BOOT_STARTER_VERSION
+import DependencyVersions.JUNIT_PLATFORM_LAUNCHER_VERSION
 import DependencyVersions.JUNIT_VERSION
+import DependencyVersions.KAFKA_CLIENTS_VERSION
 import DependencyVersions.KMONGO_VERSION
 import DependencyVersions.KMSL_VERSION
 import DependencyVersions.KOIN_KTOR_VERSION
 import DependencyVersions.KOTEST_EXTENSIONS_TEST_CONTAINERS_VERSION
 import DependencyVersions.KOTEST_SPRING_EXTENSION_VERSION
 import DependencyVersions.KOTLIN_LOGGING_VERSION
+import DependencyVersions.JUNIT5_VERSION
 import DependencyVersions.KOTLIN_VERSION
+import DependencyVersions.KOTLINX_SERIALIZATION_JSON_VERSION
 import DependencyVersions.KTORM_VERSION
 import DependencyVersions.KTOR_EXTENSION_VERSION
 import DependencyVersions.LETTUCE_VERSION
@@ -41,7 +45,7 @@ object Dependencies {
         const val JACKSON_MODULE_KOTLIN = "com.fasterxml.jackson.module:jackson-module-kotlin"
         const val JACKSON_DATA_TYPE_JSR310 = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$JACKSON_DATA_TYPE_JSR310_VERSION"
         const val REACTOR_KOTLIN_EXTENSIONS = "io.projectreactor.kotlin:reactor-kotlin-extensions"
-        const val SERIALIZATION_JSON = "org.jetbrains.kotlinx:kotlinx-serialization-json:$KOTLIN_VERSION"
+        const val SERIALIZATION_JSON = "org.jetbrains.kotlinx:kotlinx-serialization-json:$KOTLINX_SERIALIZATION_JSON_VERSION"
     }
 
     object SpringBootStarters {
@@ -81,10 +85,11 @@ object Dependencies {
 
     object Exposed {
         const val EXPOSED_CORE = "org.jetbrains.exposed:exposed-core:$EXPOSED_VERSION"
-        const val EXPOSED_DAO = "org.jetbrains.exposed:exposed-dao:$EXPOSED_VERSION"
+        const val EXPOSED_R2DBC = "org.jetbrains.exposed:exposed-r2dbc:$EXPOSED_VERSION"
         const val EXPOSED_JAVA_TIME = "org.jetbrains.exposed:exposed-java-time:$EXPOSED_VERSION"
-        const val EXPOSED_JDBC = "org.jetbrains.exposed:exposed-jdbc:$EXPOSED_VERSION"
         const val EXPOSED_JSON = "org.jetbrains.exposed:exposed-json:$EXPOSED_VERSION"
+        const val EXPOSED_DAO = "org.jetbrains.exposed:exposed-dao:$EXPOSED_VERSION"
+        const val EXPOSED_JDBC = "org.jetbrains.exposed:exposed-jdbc:$EXPOSED_VERSION"
     }
 
     object Ktorm {
@@ -110,7 +115,7 @@ object Dependencies {
 
     object R2dbc {
         const val R2DBC_POOL = "io.r2dbc:r2dbc-pool:$R2DBC_POOL_VERSION"
-        const val R2DBC_POSTGRESQL = "io.r2dbc:r2dbc-postgresql:$R2DBC_POSTGRESQL_VERSION"
+        const val R2DBC_POSTGRESQL = "org.postgresql:r2dbc-postgresql:$R2DBC_POSTGRESQL_VERSION"
     }
 
     object Flyway {
@@ -129,7 +134,8 @@ object Dependencies {
         const val KOTLIN_TEST_JUNIT = "org.jetbrains.kotlin:kotlin-test-junit:$KOTLIN_VERSION"
         const val KOTEST_RUNNER_JUNIT5 = "io.kotest:kotest-runner-junit5:$JUNIT_VERSION"
         const val KOTEST_ASSERTIONS_CORE = "io.kotest:kotest-assertions-core:$JUNIT_VERSION"
-        const val PLATFORM_LAUNCHER = "org.junit.platform:junit-platform-launcher"
+        const val PLATFORM_LAUNCHER = "org.junit.platform:junit-platform-launcher:$JUNIT_PLATFORM_LAUNCHER_VERSION"
+        const val JUNIT_VINTAGE_ENGINE = "org.junit.vintage:junit-vintage-engine:$JUNIT5_VERSION"
         const val KOTEST_EXTENSIONS_TEST_CONTAINERS = "io.kotest.extensions:kotest-extensions-testcontainers:$KOTEST_EXTENSIONS_TEST_CONTAINERS_VERSION"
         const val KOTLIN_TEST_JUNIT5 = "org.jetbrains.kotlin:kotlin-test-junit5"
         const val SPRING_BOOT_STARTER_TEST = "org.springframework.boot:spring-boot-starter-test"
@@ -153,7 +159,7 @@ object Dependencies {
 
     object Kafka {
         const val SPRING_KAFKA = "org.springframework.kafka:spring-kafka:$SPRING_KAFKA_VERSION"
-        const val KAFKA_CLIENTS = "org.apache.kafka:kafka-clients:3.8.0"
+        const val KAFKA_CLIENTS = "org.apache.kafka:kafka-clients:$KAFKA_CLIENTS_VERSION"
     }
 
     object Custom {

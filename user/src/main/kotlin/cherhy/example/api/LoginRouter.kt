@@ -9,7 +9,6 @@ import com.cherhy.common.util.User.LOGIN
 import com.cherhy.common.util.User.LOGOUT
 import com.cherhy.common.util.User.REFRESH
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*

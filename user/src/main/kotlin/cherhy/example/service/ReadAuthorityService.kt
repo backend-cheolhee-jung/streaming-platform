@@ -1,6 +1,5 @@
 package cherhy.example.service
 
-import cherhy.example.domain.Role
 import cherhy.example.repository.AuthorityRepository
 import com.cherhy.common.util.model.UserId
 
@@ -11,5 +10,5 @@ class ReadAuthorityService(
         userId: UserId,
     ) =
         authorityRepository.findOne(userId)
-            .map { Role.valueOf(it.role) }
+            .map { it.role }
 }

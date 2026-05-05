@@ -1,6 +1,7 @@
 package cherhy.example.domain
 
 import com.cherhy.common.util.model.UserId
+import org.jetbrains.exposed.v1.core.ResultRow
 
 data class UserDomain(
     val id: UserId,
@@ -13,14 +14,14 @@ data class UserDomain(
     companion object {
         @JvmStatic
         fun of(
-            user: User,
+            row: ResultRow,
         ) = UserDomain(
-            id = UserId.of(user.id.value),
-            name = Username.of(user.name),
-            email = UserEmail.of(user.email),
-            password = UserPassword.of(user.password),
-            salt = UserSalt.of(user.salt),
-            isDeleted = UserIsDeleted.of(user.isDeleted),
+            id = UserId.of(row[Users.id].value),
+            name = Username.of(row[Users.name]),
+            email = UserEmail.of(row[Users.email]),
+            password = UserPassword.of(row[Users.password]),
+            salt = UserSalt.of(row[Users.salt]),
+            isDeleted = UserIsDeleted.of(row[Users.isDeleted]),
         )
     }
 }

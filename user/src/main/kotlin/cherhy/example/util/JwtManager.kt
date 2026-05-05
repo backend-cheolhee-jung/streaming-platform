@@ -29,7 +29,7 @@ class JwtManager {
             .withIssuer(issuer)
             .withClaim(USER_ID, userId.value)
             .withClaim(USERNAME, userName.value)
-            .withClaim(ROLE, roles.joinToString { "," })
+            .withClaim(ROLE, roles.joinToString(",") { it.name })
             .apply {
                 when (tokenType) {
                     TokenType.ACCESS -> withExpiresAt(
@@ -40,7 +40,8 @@ class JwtManager {
                     )
                 }
             }
-            .sign(Algorithm.HMAC256(secret))!!
+            .sign(Algorithm.HMAC256(secret))
+            ?: error("JWT signing returned null")
 
     companion object {
         @JvmStatic
