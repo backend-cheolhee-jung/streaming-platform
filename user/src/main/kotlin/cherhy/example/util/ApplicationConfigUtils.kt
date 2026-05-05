@@ -4,17 +4,16 @@ import com.typesafe.config.ConfigFactory
 import io.ktor.server.config.*
 
 object ApplicationConfigUtils {
-    private fun getConfigProperty(
-        path: String,
-    ) =
-        HoconApplicationConfig(ConfigFactory.load()).property(path).getString()
-
     fun getDataSource(
         dataSourceType: DataSourceType,
         key: String,
-    ) = getConfigProperty("database.${dataSourceType.name.lowercase()}.datasource.$key")
+    ) = HoconApplicationConfig(ConfigFactory.load())
+        .property("database.${dataSourceType.name.lowercase()}.datasource.$key")
+        .getString()
 
     fun getJwt(
         key: String,
-    ) = getConfigProperty("jwt.$key")
+    ) = HoconApplicationConfig(ConfigFactory.load())
+        .property("jwt.$key")
+        .getString()
 }

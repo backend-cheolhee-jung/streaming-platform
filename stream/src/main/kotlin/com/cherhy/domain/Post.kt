@@ -50,7 +50,7 @@ value class PostId(
     }
 }
 
-fun Any.toPostId() = this as PostId
+fun Any.toPostId() = PostId.of(this as Long)
 
 @JvmInline
 @Serializable
