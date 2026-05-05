@@ -176,6 +176,20 @@ services:
         - axon-server
         - gateway
 
+  frontend:
+    container_name: frontend
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_GATEWAY_URL=http://gateway:10100
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    depends_on:
+      - gateway
+
 volumes:
   axonserver-data:
     driver: local
