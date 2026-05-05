@@ -238,10 +238,20 @@ class User(id: EntityID<UserId>) : BaseEntity(id = id.unwrap(), table = Users) {
 
 ### 레이어 간 변환은 반드시 명시적 메서드로
 
-Request → Command, Entity → Domain 변환은 반드시 `toCommand()`, `DomainClass::of` 형태로 명시한다. 레이어 간 직접 참조는 허용하지 않는다.
+레이어 간 변환은 **변환 방향**에 따라 메서드 위치를 결정한다. 레이어 간 직접 참조는 허용하지 않는다.
+
+#### 변환 방향 규칙
+
+| 방향 | 메서드 | 위치 | 예시 |
+|---|---|---|---|
+| Controller → Service | `to~()` | 변환 **출발** 객체의 확장/멤버 함수 | `request.toCommand()` |
+| Service → Controller | `of()` | 변환 **목표** 클래스의 companion object | `UserResponse.of(domain)` |
+| DB Row → Domain | `of()` | 변환 **목표** 도메인의 companion object | `UserDomain.of(resultRow)` |
+
+**핵심 원칙**: 의존 방향을 따른다. 하위 계층 타입(`ResultRow`, `Entity`)이 상위 계층 타입(`UserDomain`)을 참조하는 확장 함수(`ResultRow.toUserDomain()`)는 의존 방향을 역전시키므로 금지한다. 상위 계층이 `of()`로 자신을 생성한다.
 
 ```kotlin
-// ✅ Request → Command 변환
+// ✅ Controller → Service: 출발 객체에 to~()
 data class LoginRequest(val email: String, val password: String) {
     fun toCommand() = LoginCommand(
         email = UserEmail.of(email),
@@ -249,17 +259,30 @@ data class LoginRequest(val email: String, val password: String) {
     )
 }
 
-// ✅ Entity → Domain 변환 (companion object of())
-data class UserDomain(...) {
+// ✅ Service → Controller: 목표 객체에 of()
+data class UserResponse(val id: Long, val email: String) {
     companion object {
         @JvmStatic
-        fun of(user: User) = UserDomain(
-            id = UserId.of(user.id.value),
-            name = Username.of(user.name),
-            ...
+        fun of(domain: UserDomain) = UserResponse(
+            id = domain.id.value,
+            email = domain.email.value,
         )
     }
 }
+
+// ✅ DB Row → Domain: 도메인이 of()로 자신을 생성
+data class UserDomain(val id: UserId, val email: UserEmail) {
+    companion object {
+        @JvmStatic
+        fun of(row: ResultRow) = UserDomain(
+            id = UserId.of(row[Users.id].value),
+            email = UserEmail.of(row[Users.email]),
+        )
+    }
+}
+
+// ❌ DB 계층 타입에 도메인 의존을 심는 확장 함수 — 의존 방향 역전
+fun ResultRow.toUserDomain() = UserDomain(...)
 
 // ✅ 서비스 계층에서 변환 체이닝
 suspend fun get(email: UserEmail) =
