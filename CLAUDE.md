@@ -575,3 +575,27 @@ val userId = ...
 ```
 
 약어가 산업 표준으로 굳어진 경우(예: `id`, `url`, `http`, `jwt`, `dto`)는 허용한다.
+
+### `private` 메서드 지양
+
+캡슐화는 클래스·객체 경계로 달성한다. 내부 로직을 `private` 메서드로 쪼개는 것은 불필요한 복잡도를 유발한다. 설정이나 초기화 같은 코드를 `private` 메서드로 추출하지 말고, 호출부에 직접 작성하거나 별도 클래스로 책임을 분리한다.
+
+```kotlin
+// ❌ — private 메서드로 추출
+fun Application.configureDatabase() {
+    DatabaseFactory.masterDatabase = buildConnectionPool(MASTER)
+    DatabaseFactory.slaveDatabase = buildConnectionPool(SLAVE)
+}
+
+private fun buildConnectionPool(type: DataSourceType): Database { ... }
+
+// ✅ — 호출부에 직접 작성
+fun Application.configureDatabase() {
+    DatabaseFactory.masterDatabase = Database.connect(
+        HikariDataSource(HikariConfig().apply { ... })
+    )
+    DatabaseFactory.slaveDatabase = Database.connect(
+        HikariDataSource(HikariConfig().apply { ... })
+    )
+}
+```
