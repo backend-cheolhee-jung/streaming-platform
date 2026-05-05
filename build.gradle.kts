@@ -22,6 +22,7 @@ allprojects {
 }
 
 subprojects {
+    if (project.name == "frontend") return@subprojects
     apply(plugin = "kotlin")
 
     dependencies {
