@@ -2,14 +2,14 @@ package com.cherhy.schedule
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import io.kotest.core.spec.style.FunSpec
+import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.testcontainers.containers.PostgreSQLContainer
 
-class DatabaseConfigTest : FunSpec({
+class DatabaseConfigTest : StringSpec({
     companion object {
         private const val TEST_PASSWORD = "postgres"
     }
@@ -49,11 +49,11 @@ class DatabaseConfigTest : FunSpec({
         }
     }
 
-    test("database connection is established successfully") {
+    "database connection is established successfully" {
         db shouldNotBe null
     }
 
-    test("can execute a query against the connected database") {
+    "can execute a query against the connected database" {
         val result = transaction(db) {
             exec("SELECT 1 AS value") { rs ->
                 rs.next()
@@ -63,7 +63,7 @@ class DatabaseConfigTest : FunSpec({
         result shouldBe 1
     }
 
-    test("HikariConfig sets driverClassName before jdbcUrl") {
+    "HikariConfig sets driverClassName before jdbcUrl" {
         val config = HikariConfig().apply {
             driverClassName = "org.postgresql.Driver"
             jdbcUrl = container.jdbcUrl
@@ -76,7 +76,7 @@ class DatabaseConfigTest : FunSpec({
         config.jdbcUrl shouldBe container.jdbcUrl
     }
 
-    test("can create and query a table in the test database") {
+    "can create and query a table in the test database" {
         transaction(db) {
             exec(
                 """

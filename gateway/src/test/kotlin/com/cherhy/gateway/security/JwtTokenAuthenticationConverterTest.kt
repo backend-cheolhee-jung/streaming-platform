@@ -1,16 +1,16 @@
 package com.cherhy.gateway.security
 
-import io.kotest.core.spec.style.FunSpec
+import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest
 import org.springframework.mock.web.server.MockServerWebExchange
 import reactor.test.StepVerifier
 
-class JwtTokenAuthenticationConverterTest : FunSpec({
+class JwtTokenAuthenticationConverterTest : StringSpec({
     val converter = JwtTokenAuthenticationConverter()
 
-    test("returns authentication containing Bearer token") {
+    "returns authentication containing Bearer token" {
         val request = MockServerHttpRequest.get("/test")
             .header("Authorization", "Bearer my.jwt.token")
             .build()
@@ -24,7 +24,7 @@ class JwtTokenAuthenticationConverterTest : FunSpec({
             .verifyComplete()
     }
 
-    test("returns empty when Authorization header is absent") {
+    "returns empty when Authorization header is absent" {
         val request = MockServerHttpRequest.get("/test").build()
         val exchange = MockServerWebExchange.from(request)
 
@@ -32,7 +32,7 @@ class JwtTokenAuthenticationConverterTest : FunSpec({
             .verifyComplete()
     }
 
-    test("returns empty when Authorization header is not Bearer") {
+    "returns empty when Authorization header is not Bearer" {
         val request = MockServerHttpRequest.get("/test")
             .header("Authorization", "Basic dXNlcjpwYXNz")
             .build()
