@@ -6,14 +6,14 @@ object Encoder {
     fun encode(
         value: String,
     ) = BCrypt.withDefaults().hashToString(12, value.toCharArray())
-        ?: error("BCrypt hashing returned null")
+        ?: throw IllegalStateException("BCrypt encoding returned null")
 
     fun ifMatches(
         value: String,
         encoded: String,
-        block: () -> IllegalStateException = { throw IllegalStateException("Password does not match") }
+        block: () -> IllegalStateException = { IllegalStateException("Password does not match") },
     ) {
         val isMatched = BCrypt.verifyer().verify(value.toCharArray(), encoded).verified
-        if (isMatched.not()) block()
+        if (isMatched.not()) throw block()
     }
 }
