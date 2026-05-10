@@ -226,7 +226,7 @@ class User(id: EntityID<UserId>) : BaseEntity(id = id.unwrap(), table = Users) {
 
 ### 테스트
 
-- 프레임워크: **Kotest FunSpec** + **TestContainers**
+- 프레임워크: **Kotest StringSpec / BehaviorSpec / FeatureSpec** + **TestContainers**
 - DB가 필요한 통합 테스트는 `TestContainers`의 실제 PostgreSQL 컨테이너를 사용한다
 - 각 테스트 종료 후 `afterTest`/`afterEach`에서 테스트 데이터를 정리해 격리한다
 - Spring 모듈: `@SpringBootTest` + `kotest-extensions-spring`
@@ -416,20 +416,39 @@ object EntityFactory {
 val entity = EntityFactory.generateTestR2dbcEntity(id = 1)
 ```
 
-### 테스트는 Kotest BehaviorSpec (Given/When/Then)
+### 테스트 스펙 선택 기준
 
-Spring 통합 테스트는 `BehaviorSpec`, 도메인/단위 테스트는 `FunSpec`을 사용한다.
+| 상황 | 스펙 |
+|---|---|
+| 단순 단위 테스트 (값 검증, 변환, 유틸) | `StringSpec` |
+| 복잡한 UseCase / 통합 테스트 (Given-When-Then 흐름) | `BehaviorSpec` |
+| 여러 시나리오가 존재하는 테스트 (Scenario 분기) | `FeatureSpec` |
 
 ```kotlin
-// ✅ Spring 통합 테스트
-@SpringBootTest
-class CacheTest(...) : WithTestContainers, BehaviorSpec({
-    afterEach { /* 정리 */ }
+// ✅ StringSpec — 단순 단위 테스트
+class TokenDecoderTest : StringSpec({
+    "decodes user-id claim as Long" {
+        val principal = tokenDecoder.decode(buildToken(userId = 42L))
+        principal.userId shouldBe 42L
+    }
+})
 
-    Given("캐시가 없는 상태에서") {
-        When("조회하면") {
-            Then("DB를 호출하고 캐시에 저장한다") { ... }
+// ✅ BehaviorSpec — 복잡한 UseCase / 통합 테스트
+@SpringBootTest
+class SignUpUseCaseTest : WithTestContainers, BehaviorSpec({
+    Given("이미 가입된 이메일이 있을 때") {
+        When("같은 이메일로 회원가입을 시도하면") {
+            Then("예외가 발생한다") { ... }
         }
+    }
+})
+
+// ✅ FeatureSpec — 여러 시나리오가 존재하는 테스트
+class PaymentFeatureTest : FeatureSpec({
+    feature("결제 처리") {
+        scenario("정상 결제 시 잔액이 차감된다") { ... }
+        scenario("잔액 부족 시 예외가 발생한다") { ... }
+        scenario("중복 결제 요청은 무시된다") { ... }
     }
 })
 ```

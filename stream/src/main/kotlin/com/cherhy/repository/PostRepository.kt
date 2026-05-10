@@ -8,6 +8,7 @@ import com.cherhy.common.util.model.*
 import com.cherhy.domain.*
 import com.cherhy.plugins.database
 import com.cherhy.util.extension.contains
+import org.ktorm.database.Database
 import org.ktorm.dsl.*
 import org.ktorm.entity.count
 import org.ktorm.entity.filter
@@ -53,18 +54,18 @@ interface PostRepository {
     ): PageResponse<PostItemResponse>
 }
 
-class PostRepositoryImpl : PostRepository {
+class PostRepositoryImpl(private val db: Database = database) : PostRepository {
     override suspend fun save(
         userId: UserId,
         title: PostTitle,
         content: PostContent,
         category: PostCategory,
     ) =
-        database.insertAndGenerateKey(Posts) {
-            set(it.title, title.value)
-            set(it.content, content.value)
-            set(it.author, userId.value)
-            set(it.category, category.name)
+        db.insertAndGenerateKey(Posts) {
+            set(it.title, title)
+            set(it.content, content)
+            set(it.author, userId)
+            set(it.category, category)
         }.toPostId()
 
     override suspend fun update(
@@ -74,13 +75,13 @@ class PostRepositoryImpl : PostRepository {
         content: PostContent,
         category: PostCategory
     ) =
-        database.update(Posts) {
-            set(it.title, title.value)
-            set(it.content, content.value)
-            set(it.category, category.name)
+        db.update(Posts) {
+            set(it.title, title)
+            set(it.content, content)
+            set(it.category, category)
             where {
-                it.id eq postId.value
-                it.author eq userId.value
+                it.id eq postId
+                it.author eq userId
             }
         }.noReturn
 
@@ -88,27 +89,27 @@ class PostRepositoryImpl : PostRepository {
         userId: UserId,
         postId: PostId,
     ) =
-        database.delete(Posts) {
-            it.id eq postId.value
-            it.author eq userId.value
+        db.delete(Posts) {
+            it.id eq postId
+            it.author eq userId
         }.noReturn
 
     override suspend fun isExists(
         userId: UserId,
         postId: PostId,
     ) =
-        database.posts.filter {
-            it.id eq postId.value
-            it.author eq userId.value
+        db.posts.filter {
+            it.id eq postId
+            it.author eq userId
         }.count() > 0
 
     override suspend fun findOne(
         userId: UserId,
         postId: PostId,
     ) =
-        database.posts.find {
-            it.id eq postId.value
-            it.author eq userId.value
+        db.posts.find {
+            it.id eq postId
+            it.author eq userId
         }?.let(PostDetailResponse::of)
 
     override suspend fun findAll(
@@ -119,16 +120,16 @@ class PostRepositoryImpl : PostRepository {
         size: Size,
     ): PageResponse<PostItemResponse> {
         val generator = PageOffsetCalculator.of(page, size)
-        val expression = database.posts
-            .also { query ->
-                query.filter { it.author eq userId.value }
+        val expression = db.posts.also { query ->
+                query.filter { it.author eq userId }
                 keyword?.let { keyword ->
                     query.filter { it.title contains keyword.value }
                 }
                 category?.let { category ->
-                    query.filter { it.category eq category.name }
+                    query.filter { it.category eq category }
                 }
             }
+
 
         val count = expression.count().toLong()
         val data = expression.query

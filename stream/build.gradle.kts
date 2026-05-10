@@ -49,12 +49,16 @@ dependencies {
 
 	implementation(Ktor.KTOR_KOIN)
 	implementation(Ktorm.KTORM_CORE)
+	implementation(Ktorm.KTORM_SUPPORT_POSTGRESQL)
 
 	implementation(KMongo.KMONGO_COROUTINE_CORE)
 	implementation(KMongo.KMONGO_COROUTINE)
 
-	testImplementation(Test.KTOR_SERVER_TESTS_JVM)
-	testImplementation(Test.KOTLIN_TEST_JUNIT)
+	testImplementation(Test.KOTEST_RUNNER_JUNIT5)
+	testImplementation(Test.KOTEST_ASSERTIONS_CORE)
+	testImplementation(Test.TEST_CONTAINERS_POSTGRESQL)
+	testImplementation(Test.TEST_CONTAINERS_JUNIT_JUPITER)
+	testImplementation(Database.POSTGRESQL)
 }
 
 java {
@@ -64,6 +68,7 @@ java {
 tasks.shadowJar {
 	enabled = true
 	archiveFileName.set("${project.name}.jar")
+	mergeServiceFiles()
 
 	manifest {
 		attributes(

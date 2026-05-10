@@ -33,7 +33,6 @@ fun Route.post() {
         val postId = call.pathParameter.postId
         val userId = call.request.userId
         val post = getPostUseCase.execute(userId, postId)
-
         call.respond(OK, post)
     }
 
@@ -42,7 +41,6 @@ fun Route.post() {
         val search = call.getQueryParams<GetPostRequest>()
         val userId = call.request.userId
         val posts = getPostUseCase.execute(userId, search.toQuery(), pageRequest)
-
         call.respond(OK, posts)
     }
 
@@ -50,7 +48,6 @@ fun Route.post() {
         val userId = call.request.userId
         val video = call.getVideo()
         val post = call.receive<CreatePostRequest>()
-
         createPostUseCase.execute(userId, video, post.toCommand())
         call.respond(Created)
     }
@@ -60,7 +57,6 @@ fun Route.post() {
         val postId = call.pathParameter.postId
         val video = call.getVideo()
         val post = call.receive<UpdatePostRequest>()
-
         updatePostUseCase.execute(userId, postId, video, post.toCommand())
         call.respond(OK)
     }
@@ -68,7 +64,6 @@ fun Route.post() {
     delete(DELETE_POST) {
         val userId = call.request.userId
         val postId = call.pathParameter.postId
-
         deletePostUseCase.execute(userId, postId)
         call.respond(NoContent)
     }
