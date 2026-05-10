@@ -3,14 +3,14 @@ package com.cherhy.repository
 import com.cherhy.common.util.model.Price
 import com.cherhy.common.util.model.UserId
 import com.cherhy.domain.*
-import io.kotest.core.spec.style.FunSpec
+import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.nulls.shouldNotBeNull
 import org.ktorm.database.Database
 import java.math.BigDecimal
 
-class VideoRepositoryTest : FunSpec({
+class VideoRepositoryTest : StringSpec({
     val db: Database by lazy { TestDatabase.start() }
     lateinit var postRepo: PostRepositoryImpl
     lateinit var videoRepo: VideoRepositoryImpl
@@ -23,7 +23,7 @@ class VideoRepositoryTest : FunSpec({
         videoRepo = VideoRepositoryImpl(db)
     }
 
-    test("save returns a valid VideoId (not ClassCastException)") {
+    "save returns a valid VideoId (not ClassCastException)" {
         val postId = postRepo.save(
             UserId.of(1L),
             com.cherhy.domain.PostTitle.of("post"),
@@ -44,7 +44,7 @@ class VideoRepositoryTest : FunSpec({
         videoId.value shouldNotBe 0L
     }
 
-    test("findOne returns saved video by videoId") {
+    "findOne returns saved video by videoId" {
         val postId = postRepo.save(
             UserId.of(1L),
             com.cherhy.domain.PostTitle.of("post"),
@@ -65,7 +65,7 @@ class VideoRepositoryTest : FunSpec({
         found.name.value shouldBe "my-video"
     }
 
-    test("isExists returns true for saved video") {
+    "isExists returns true for saved video" {
         val postId = postRepo.save(
             UserId.of(1L),
             com.cherhy.domain.PostTitle.of("post"),
@@ -85,7 +85,7 @@ class VideoRepositoryTest : FunSpec({
         videoRepo.isExists(videoId) shouldBe true
     }
 
-    test("isExists returns false for nonexistent video") {
+    "isExists returns false for nonexistent video" {
         videoRepo.isExists(VideoId.of(99999L)) shouldBe false
     }
 })

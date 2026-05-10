@@ -190,6 +190,42 @@ services:
     depends_on:
       - postgres-master-container
 
+  frontend:
+    container_name: frontend
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_GATEWAY_URL=http://gateway:10100
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    depends_on:
+      - gateway
+
+volumes:
+  axonserver-data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./axon-server-se/data
+  axonserver-events:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./axon-server-se/events
+  axonserver-config:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./axon-server-se/config
+  master-data:
+  slave-data:
+
 networks:
   cherhy-network:
     driver: bridge

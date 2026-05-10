@@ -15,10 +15,10 @@ import org.jetbrains.exposed.sql.Database
 fun Application.configureDatabase() {
     val hikari = HikariDataSource(
         HikariConfig().apply {
+            driverClassName = getDataSource(DRIVER_CLASS_NAME)
             jdbcUrl = getDataSource(URL)
             username = getDataSource(USERNAME)
             password = getDataSource(PASSWORD)
-            driverClassName = getDataSource(DRIVER_CLASS_NAME)
             maximumPoolSize = getDataSource(MAX_POOL_SIZE).toInt()
             isAutoCommit = false
             transactionIsolation = getDataSource(ISOLATION_LEVEL)

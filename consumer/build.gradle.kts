@@ -1,4 +1,5 @@
 import Dependencies.Kafka
+import Dependencies.Test
 
 plugins {
     kotlin(Plugins.JVM) version PluginVersions.KOTLIN_VERSION
@@ -12,6 +13,9 @@ dependencies {
 
     implementation(project(UtilityModules.COMMON))
     implementation(Kafka.SPRING_KAFKA)
+
+    testImplementation(Test.KOTEST_RUNNER_JUNIT5)
+    testImplementation(Test.KOTEST_ASSERTIONS_CORE)
 }
 
 java {
@@ -25,4 +29,8 @@ tasks.bootJar {
 tasks.jar {
     enabled = true
     archiveFileName.set("${project.name}.jar")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }

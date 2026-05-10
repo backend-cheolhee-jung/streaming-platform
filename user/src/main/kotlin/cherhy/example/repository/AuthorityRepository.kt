@@ -15,7 +15,10 @@ interface AuthorityRepository {
 }
 
 class AuthorityRepositoryImpl : AuthorityRepository {
-    override suspend fun save(id: UserId, role: Role): AuthorityDomain {
+    override suspend fun save(
+        id: UserId,
+        role: Role,
+    ): AuthorityDomain {
         val rowId = Authorities.insert {
             it[Authorities.role] = role.name
             it[Authorities.userId] = id.value
@@ -28,7 +31,9 @@ class AuthorityRepositoryImpl : AuthorityRepository {
             .let(AuthorityDomain::of)
     }
 
-    override suspend fun findOne(userId: UserId): List<AuthorityDomain> =
+    override suspend fun findOne(
+        userId: UserId,
+    ): List<AuthorityDomain> =
         Authorities.selectAll().where { Authorities.userId eq userId.value }
             .toList()
             .map(AuthorityDomain::of)

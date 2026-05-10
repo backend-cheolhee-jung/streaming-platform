@@ -12,7 +12,7 @@
 ## 언어/프레임워크
 
 - Language: Kotlin 2.0 / JDK 21
-- Framework: Spring Boot 3.2.5 (WebFlux), Axon Framework 4.9
+- Framework: Spring Boot 3.2.5 (WebFlux), Axon Framework 4.9.3
 - DB: PostgreSQL (R2DBC, master/slave 분리, Flyway 마이그레이션)
 - Cache: Redis (Redisson lock 포함)
 - Messaging: Kafka, Axon Server

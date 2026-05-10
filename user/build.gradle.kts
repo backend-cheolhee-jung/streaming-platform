@@ -1,4 +1,5 @@
 import Dependencies.Coroutines
+import Dependencies.Database
 import Dependencies.Exposed
 import Dependencies.Kotlin
 import Dependencies.Ktor
@@ -41,6 +42,7 @@ dependencies {
     implementation(Exposed.EXPOSED_R2DBC)
     implementation(Exposed.EXPOSED_JAVA_TIME)
     implementation(R2dbc.R2DBC_POSTGRESQL)
+    implementation(R2dbc.R2DBC_POOL)
     implementation(Coroutines.KOTLIN_COROUTINES_CORE)
 
     implementation(Security.BCRYPT)
@@ -49,10 +51,17 @@ dependencies {
 
     testImplementation(Test.KOTEST_RUNNER_JUNIT5)
     testImplementation(Test.KOTEST_ASSERTIONS_CORE)
+    testImplementation(Test.TEST_CONTAINERS_POSTGRESQL)
+    testImplementation(Test.TEST_CONTAINERS_JUNIT_JUPITER)
+    testImplementation(Database.POSTGRESQL)
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 tasks.shadowJar {

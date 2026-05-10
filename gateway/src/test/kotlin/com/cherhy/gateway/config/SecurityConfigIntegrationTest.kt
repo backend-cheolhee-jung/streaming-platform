@@ -5,7 +5,7 @@ import com.nimbusds.jose.JWSHeader
 import com.nimbusds.jose.crypto.MACSigner
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
-import io.kotest.core.spec.style.StringSpec
+import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.extensions.spring.SpringExtension
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
@@ -20,7 +20,7 @@ private const val TEST_JWT_SECRET = "test-secret-that-is-long-enough-for-hmac-25
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
-class SecurityConfigIntegrationTest : StringSpec() {
+class SecurityConfigIntegrationTest : BehaviorSpec() {
 
     override fun extensions() = listOf(SpringExtension)
 
@@ -28,36 +28,48 @@ class SecurityConfigIntegrationTest : StringSpec() {
     lateinit var webTestClient: WebTestClient
 
     init {
-        "GET /payments/1 without Authorization header returns 401 Unauthorized" {
-            webTestClient.get()
-                .uri("/payments/1")
-                .exchange()
-                .expectStatus().isUnauthorized
+        Given("Authorization 헤더가 없는 경우") {
+            When("GET /payments/1 을 요청하면") {
+                Then("401 Unauthorized 를 반환한다") {
+                    webTestClient.get()
+                        .uri("/payments/1")
+                        .exchange()
+                        .expectStatus().isUnauthorized
+                }
+            }
         }
 
-        "POST /users/login without token is not 401 (permit all for /users/**)" {
-            webTestClient.post()
-                .uri("/users/login")
-                .exchange()
-                .expectStatus().value { status ->
-                    assert(status != HttpStatus.UNAUTHORIZED.value()) {
-                        "Expected non-401 status but got $status"
-                    }
+        Given("/users/** 경로는 인증 없이 허용되는 경우") {
+            When("POST /users/login 을 요청하면") {
+                Then("401 이 아닌 응답을 반환한다") {
+                    webTestClient.post()
+                        .uri("/users/login")
+                        .exchange()
+                        .expectStatus().value { status ->
+                            assert(status != HttpStatus.UNAUTHORIZED.value()) {
+                                "Expected non-401 status but got $status"
+                            }
+                        }
                 }
+            }
         }
 
-        "GET /payments/1 with valid Bearer JWT is not 401" {
-            val token = buildValidToken()
+        Given("유효한 Bearer JWT 토큰이 있는 경우") {
+            When("GET /payments/1 을 요청하면") {
+                Then("401 이 아닌 응답을 반환한다") {
+                    val token = buildValidToken()
 
-            webTestClient.get()
-                .uri("/payments/1")
-                .header("Authorization", "Bearer $token")
-                .exchange()
-                .expectStatus().value { status ->
-                    assert(status != HttpStatus.UNAUTHORIZED.value()) {
-                        "Expected non-401 status but got $status"
-                    }
+                    webTestClient.get()
+                        .uri("/payments/1")
+                        .header("Authorization", "Bearer $token")
+                        .exchange()
+                        .expectStatus().value { status ->
+                            assert(status != HttpStatus.UNAUTHORIZED.value()) {
+                                "Expected non-401 status but got $status"
+                            }
+                        }
                 }
+            }
         }
     }
 }

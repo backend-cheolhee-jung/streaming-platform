@@ -10,7 +10,7 @@ object KafkaConstant {
 
     object Producer {
         const val ALL = "all"
-        const val RETRIES = "100"
+        const val RETRIES = 100
     }
 
     object Topic {

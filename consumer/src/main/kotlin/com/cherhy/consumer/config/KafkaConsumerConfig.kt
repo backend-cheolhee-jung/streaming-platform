@@ -12,6 +12,8 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.listener.ContainerProperties
+import org.springframework.kafka.listener.DefaultErrorHandler
+import org.springframework.util.backoff.FixedBackOff
 
 @EnableKafka
 @Configuration
@@ -35,6 +37,8 @@ class KafkaConsumerConfig {
         ConcurrentKafkaListenerContainerFactory<String, String>().apply {
             consumerFactory = consumerFactory()
             setConcurrency(3)
-            containerProperties.ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE
+            containerProperties.ackMode = ContainerProperties.AckMode.BATCH
+            containerProperties.pollTimeout = 3000
+            setCommonErrorHandler(DefaultErrorHandler(FixedBackOff(1000L, 3L)))
         }
 }

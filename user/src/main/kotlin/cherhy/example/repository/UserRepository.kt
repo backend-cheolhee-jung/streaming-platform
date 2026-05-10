@@ -10,11 +10,30 @@ import org.jetbrains.exposed.v1.r2dbc.selectAll
 import org.jetbrains.exposed.v1.r2dbc.update
 
 interface UserRepository {
-    suspend fun save(email: UserEmail, name: Username, password: UserPassword, salt: UserSalt): UserDomain
-    suspend fun isExists(email: UserEmail): Boolean
-    suspend fun findOne(email: UserEmail): UserDomain?
-    suspend fun findOne(userId: UserId): UserDomain?
-    suspend fun save(userId: UserId, email: UserEmail, password: UserPassword): UserDomain?
+    suspend fun save(
+        email: UserEmail,
+        name: Username,
+        password: UserPassword,
+        salt: UserSalt,
+    ): UserDomain
+
+    suspend fun isExists(
+        email: UserEmail,
+    ): Boolean
+
+    suspend fun findOne(
+        email: UserEmail,
+    ): UserDomain?
+
+    suspend fun findOne(
+        userId: UserId,
+    ): UserDomain?
+
+    suspend fun save(
+        userId: UserId,
+        email: UserEmail,
+        password: UserPassword,
+    ): UserDomain?
 }
 
 class UserRepositoryImpl : UserRepository {

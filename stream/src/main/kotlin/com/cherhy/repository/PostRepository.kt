@@ -8,6 +8,7 @@ import com.cherhy.common.util.model.*
 import com.cherhy.domain.*
 import com.cherhy.plugins.database
 import com.cherhy.util.extension.contains
+import org.ktorm.database.Database
 import org.ktorm.dsl.*
 import org.ktorm.entity.count
 import org.ktorm.entity.filter
@@ -54,7 +55,7 @@ interface PostRepository {
 }
 
 class PostRepositoryImpl(
-    private val db: org.ktorm.database.Database = database,
+    private val db: Database = database,
 ) : PostRepository {
     override suspend fun save(
         userId: UserId,
@@ -124,6 +125,7 @@ class PostRepositoryImpl(
         val expression = db.posts.filter { it.author eq userId }
             .let { seq -> keyword?.let { kw -> seq.filter { it.title contains kw.value } } ?: seq }
             .let { seq -> category?.let { cat -> seq.filter { it.category eq cat } } ?: seq }
+
 
         val count = expression.count().toLong()
         val data = expression.query
