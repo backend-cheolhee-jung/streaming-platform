@@ -1,18 +1,11 @@
 package cherhy.example.domain
 
-import cherhy.example.util.model.BaseEntity
-import cherhy.example.util.model.BaseEntityClass
-import cherhy.example.util.model.BaseLongIdTable
-import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
+import org.jetbrains.exposed.v1.javatime.datetime
 
-object Authorities : BaseLongIdTable("authority", "id") {
+object Authorities : LongIdTable("authority", "id") {
     val role = varchar("role", 50)
     val userId = long("user_id")
-}
-
-class Authority(id: EntityID<Long>) : BaseEntity(id = id, table = Authorities) {
-    var role by Authorities.role
-    var userId by Authorities.userId
-
-    companion object : BaseEntityClass<Authority>(Authorities)
+    val createdAt = datetime("created_at")
+    val updatedAt = datetime("updated_at")
 }

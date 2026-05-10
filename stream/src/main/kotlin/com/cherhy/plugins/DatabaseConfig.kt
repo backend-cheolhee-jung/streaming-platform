@@ -32,10 +32,17 @@ val transactionManager = database.transactionManager
 suspend fun <T> reactiveTransaction(
     isolation: TransactionIsolation = TransactionIsolation.READ_COMMITTED,
     block: suspend () -> T,
-) =
+): T =
     withContext(IO) {
         val transaction = transactionManager.newTransaction(isolation)
-        transaction.connection.use {
-            block.invoke()
+        try {
+            val result = block.invoke()
+            transaction.commit()
+            result
+        } catch (e: Exception) {
+            transaction.rollback()
+            throw e
+        } finally {
+            transaction.close()
         }
     }

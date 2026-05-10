@@ -75,7 +75,7 @@ class ConnectionFactoryConfig(
     fun r2dbcEntityTemplate(
         @Qualifier(CONNECTION_FACTORY) connectionFactory: ConnectionFactory
     ) =
-        R2dbcEntityTemplate(connectionFactory, PostgresDialect.INSTANCE)
+        R2dbcEntityTemplate(DatabaseClient.create(connectionFactory), PostgresDialect.INSTANCE)
 
     @Bean
     @DependsOn(CONNECTION_FACTORY)

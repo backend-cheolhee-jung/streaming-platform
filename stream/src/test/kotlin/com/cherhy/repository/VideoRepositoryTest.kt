@@ -6,7 +6,7 @@ import com.cherhy.domain.*
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.kotest.matchers.shouldNotBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
 import org.ktorm.database.Database
 import java.math.BigDecimal
 
@@ -61,8 +61,7 @@ class VideoRepositoryTest : StringSpec({
             price = Price.of(BigDecimal.ZERO),
         )
 
-        val found = videoRepo.findOne(videoId)
-        found.shouldNotBeNull()
+        val found = videoRepo.findOne(videoId).shouldNotBeNull()
         found.name.value shouldBe "my-video"
     }
 

@@ -25,7 +25,9 @@ interface PurchasedVideoRepository {
     )
 }
 
-class PurchasedVideoRepositoryImpl(private val db: Database = database) : PurchasedVideoRepository {
+class PurchasedVideoRepositoryImpl(
+    private val db: Database = database,
+) : PurchasedVideoRepository {
     override suspend fun isExists(
         userId: UserId,
         videoId: VideoId

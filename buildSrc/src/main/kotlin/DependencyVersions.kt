@@ -29,7 +29,7 @@ object DependencyVersions {
     const val R2DBC_POOL_VERSION = "1.0.2.RELEASE"
     const val FLYWAY_VERSION = "10.15.0"
     const val SPRING_MOCKK_VERSION = "4.0.2"
-    const val KOIN_KTOR_VERSION = "4.0.2"
+    const val KOIN_KTOR_VERSION = "4.1.0"
     const val MINIO_VERSION = "8.5.10"
     const val LETTUCE_VERSION = "6.3.2.RELEASE"
     const val KMONGO_VERSION = "5.1.0"
@@ -40,7 +40,7 @@ object DependencyVersions {
     const val KTOR_EXTENSION_VERSION = "1.0.3"
     const val KOTLINX_SERIALIZATION_JSON_VERSION = "1.7.3"
     const val JUNIT5_VERSION = "5.10.0"
+    const val TEST_CONTAINERS_VERSION = "1.20.1"
     const val JUNIT_PLATFORM_LAUNCHER_VERSION = "1.10.0"
     const val KAFKA_CLIENTS_VERSION = "3.8.0"
-    const val TEST_CONTAINERS_VERSION = "1.20.1"
 }

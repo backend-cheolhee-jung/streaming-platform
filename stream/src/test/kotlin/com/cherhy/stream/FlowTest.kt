@@ -1,14 +1,14 @@
 package com.cherhy.stream
 
-import io.kotest.core.spec.style.StringSpec
+import io.kotest.core.spec.style.FunSpec
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withTimeout
 
 // https://huisam.tistory.com/entry/coroutine3?category=705896 [코틀린] 코루틴 Flow 사용법
-class FlowTest : StringSpec({
-    "Flow 생성 예시" {
+class FlowTest : FunSpec({
+    test("Flow 생성 예시") {
         // 고정된 값 집합에서 flow를 만든다.
         val one = flowOf(1, 2, 3)
 
@@ -40,7 +40,7 @@ class FlowTest : StringSpec({
         six.emit(3)
     }
 
-    "Flow 는 비동기로 데이터를 생산하는 Producer이고 Collect는 Consumer이다" {
+    test("Flow 는 비동기로 데이터를 생산하는 Producer이고 Collect는 Consumer이다") {
         flow {
             repeat(3) { data ->
                 delay(300L)
@@ -53,7 +53,7 @@ class FlowTest : StringSpec({
         }
     }
 
-    "Producer만 존재하고 Consumer가 없으면 Flow는 실행되지 않는다" {
+    test("Producer만 존재하고 Consumer가 없으면 Flow는 실행되지 않는다") {
         flow {
             repeat(3) { data ->
                 delay(300L)

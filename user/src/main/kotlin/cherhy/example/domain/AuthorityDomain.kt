@@ -1,6 +1,7 @@
 package cherhy.example.domain
 
 import com.cherhy.common.util.model.UserId
+import org.jetbrains.exposed.v1.core.ResultRow
 
 data class AuthorityDomain(
     val id: AuthorityId,
@@ -10,14 +11,12 @@ data class AuthorityDomain(
     companion object {
         @JvmStatic
         fun of(
-            authority: Authority,
-        ) = with(authority) {
-            AuthorityDomain(
-                id = AuthorityId.of(id.value),
-                userId = UserId.of(userId),
-                role = Role.valueOf(role),
-            )
-        }
+            row: ResultRow,
+        ) = AuthorityDomain(
+            id = AuthorityId.of(row[Authorities.id].value),
+            userId = UserId.of(row[Authorities.userId]),
+            role = Role.valueOf(row[Authorities.role]),
+        )
     }
 }
 

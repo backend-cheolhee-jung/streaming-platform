@@ -1,6 +1,4 @@
 import DependencyVersions.ASPECTJ_WEAVER_VERSION
-import DependencyVersions.JUNIT_PLATFORM_LAUNCHER_VERSION
-import DependencyVersions.KAFKA_CLIENTS_VERSION
 import DependencyVersions.AXON_VERSION
 import DependencyVersions.BCRYPT_VERSION
 import DependencyVersions.COROUTINES_VERSION
@@ -10,6 +8,7 @@ import DependencyVersions.FLYWAY_VERSION
 import DependencyVersions.HIKARI_CP_VERSION
 import DependencyVersions.JACKSON_DATA_TYPE_JSR310_VERSION
 import DependencyVersions.JASYPT_SPRING_BOOT_STARTER_VERSION
+import DependencyVersions.JUNIT5_VERSION
 import DependencyVersions.JUNIT_PLATFORM_LAUNCHER_VERSION
 import DependencyVersions.JUNIT_VERSION
 import DependencyVersions.KAFKA_CLIENTS_VERSION
@@ -18,11 +17,8 @@ import DependencyVersions.KMSL_VERSION
 import DependencyVersions.KOIN_KTOR_VERSION
 import DependencyVersions.KOTEST_EXTENSIONS_TEST_CONTAINERS_VERSION
 import DependencyVersions.KOTEST_SPRING_EXTENSION_VERSION
-import DependencyVersions.JUNIT5_VERSION
 import DependencyVersions.KOTLIN_LOGGING_VERSION
-import DependencyVersions.JUNIT5_VERSION
 import DependencyVersions.KOTLIN_VERSION
-import DependencyVersions.TEST_CONTAINERS_VERSION
 import DependencyVersions.KOTLINX_SERIALIZATION_JSON_VERSION
 import DependencyVersions.KTORM_VERSION
 import DependencyVersions.KTOR_EXTENSION_VERSION
@@ -151,6 +147,7 @@ object Dependencies {
         const val TEST_CONTAINERS_POSTGRESQL = "org.testcontainers:postgresql:$TEST_CONTAINERS_VERSION"
         const val TEST_CONTAINERS_R2DBC = "org.testcontainers:r2dbc:$TEST_CONTAINERS_VERSION"
         const val TEST_CONTAINERS_JUNIT_JUPITER = "org.testcontainers:junit-jupiter:$TEST_CONTAINERS_VERSION"
+        const val TEST_CONTAINERS_MONGODB = "org.testcontainers:mongodb:$TEST_CONTAINERS_VERSION"
         const val SPRING_MOCKK = "com.ninja-squad:springmockk:$SPRING_MOCKK_VERSION"
         const val KTOR_SERVER_TESTS_JVM = "io.ktor:ktor-server-tests-jvm"
         const val SPRING_TEST_CONTAINERS = "org.springframework.boot:spring-boot-testcontainers"

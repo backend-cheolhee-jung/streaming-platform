@@ -45,8 +45,6 @@ dependencies {
     implementation(R2dbc.R2DBC_POOL)
     implementation(Coroutines.KOTLIN_COROUTINES_CORE)
 
-    implementation(Coroutines.KOTLIN_COROUTINES_CORE)
-
     implementation(Security.BCRYPT)
     implementation(Ktor.KTOR_SERVER_AUTH_JVM)
     implementation(Ktor.KTOR_SERVER_AUTH_JWT_JVM)

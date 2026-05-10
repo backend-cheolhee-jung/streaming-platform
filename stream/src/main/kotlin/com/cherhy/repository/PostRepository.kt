@@ -54,7 +54,9 @@ interface PostRepository {
     ): PageResponse<PostItemResponse>
 }
 
-class PostRepositoryImpl(private val db: Database = database) : PostRepository {
+class PostRepositoryImpl(
+    private val db: Database = database,
+) : PostRepository {
     override suspend fun save(
         userId: UserId,
         title: PostTitle,
@@ -66,7 +68,7 @@ class PostRepositoryImpl(private val db: Database = database) : PostRepository {
             set(it.content, content)
             set(it.author, userId)
             set(it.category, category)
-        }.toPostId()
+        } as PostId
 
     override suspend fun update(
         userId: UserId,
@@ -120,15 +122,9 @@ class PostRepositoryImpl(private val db: Database = database) : PostRepository {
         size: Size,
     ): PageResponse<PostItemResponse> {
         val generator = PageOffsetCalculator.of(page, size)
-        val expression = db.posts.also { query ->
-                query.filter { it.author eq userId }
-                keyword?.let { keyword ->
-                    query.filter { it.title contains keyword.value }
-                }
-                category?.let { category ->
-                    query.filter { it.category eq category }
-                }
-            }
+        val expression = db.posts.filter { it.author eq userId }
+            .let { seq -> keyword?.let { kw -> seq.filter { it.title contains kw.value } } ?: seq }
+            .let { seq -> category?.let { cat -> seq.filter { it.category eq cat } } ?: seq }
 
 
         val count = expression.count().toLong()

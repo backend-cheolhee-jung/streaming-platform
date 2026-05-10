@@ -21,7 +21,7 @@
 
 ## 워크플로우 요약
 
-- 진입점: `com.cherhy.Application#module` — routing, koin DI, cache, kafka consumer 순.
+- 진입점: `com.cherhy.Application#module` — routing, koin DI, database, kafka, cache, minio 순.
 - 외부 의존성: `postgres-master`, `redis`, `kafka`, `minio` (object storage).
 - 핵심 엔드포인트:
   - `GET /streams/posts/{post-id}` — 게시물 조회

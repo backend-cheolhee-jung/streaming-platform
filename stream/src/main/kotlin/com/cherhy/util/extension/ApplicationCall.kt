@@ -24,37 +24,46 @@ inline fun <reified T : Any> ApplicationCall.getQueryParams(): T {
     return this.request.queryParameters.toClass()
 }
 
-suspend fun ApplicationCall.getVideo(): VideoRequest {
-    val multipart = this.receiveMultipart()
+data class MultipartVideoData(
+    val video: VideoRequest,
+    val fields: Map<String, String>,
+)
 
-    val videoName = multipart.readPart()
-        ?.name
-        ?: throw IllegalArgumentException("video is required.")
+suspend fun ApplicationCall.getVideoWithFields(): MultipartVideoData {
+    val multipart = receiveMultipart()
+    val fields = mutableMapOf<String, String>()
+    var fileName: String? = null
+    val buffer = ByteArrayOutputStream()
 
-    val byteArrayOutputStream = ByteArrayOutputStream()
     multipart.forEachPart { part ->
-        if (part is PartData.FileItem) {
-            part.streamProvider().use { inputStream ->
-                inputStream.copyTo(byteArrayOutputStream)
+        when (part) {
+            is PartData.FormItem -> part.name?.let { fields[it] = part.value }
+            is PartData.FileItem -> {
+                fileName = part.originalFileName ?: part.name
+                part.streamProvider().use { it.copyTo(buffer) }
             }
+            else -> {}
         }
         part.dispose()
     }
 
-    val data = ByteArrayInputStream(
-        byteArrayOutputStream.toByteArray()
-    )
+    val name = fileName ?: throw IllegalArgumentException("video file is required.")
+    val data = ByteArrayInputStream(buffer.toByteArray())
+    val size = data.available().toLong()
+    VideoValidator.validate(name, size)
 
-    val videoSize = data.available().toLong()
-    VideoValidator.validate(videoName, videoSize)
-
-    return VideoRequest.of(
-        name = VideoName.of(videoName),
-        uniqueName = VideoUniqueName.of(UUID.randomUUID().toString()),
-        data = data,
-        size = VideoSize.of(videoSize),
+    return MultipartVideoData(
+        video = VideoRequest.of(
+            name = VideoName.of(name),
+            uniqueName = VideoUniqueName.of(UUID.randomUUID().toString()),
+            data = data,
+            size = VideoSize.of(size),
+        ),
+        fields = fields,
     )
 }
+
+suspend fun ApplicationCall.getVideo(): VideoRequest = getVideoWithFields().video
 
 inline fun <reified T : Any> Parameters.toClass(): T {
     val map = this.entries().associate {

@@ -19,7 +19,7 @@
 
 ## 워크플로우 요약
 
-- 진입점: `cherhy.com.Application#module`. 라우팅, 데이터베이스, DI, 스케줄러 plugin 순.
+- 진입점: `cherhy.com.Application#module`. 라우팅, DI, 데이터베이스, 스케줄러 plugin 순.
 - 외부 의존성: `postgres-master:5432` (ShedLock 테이블 + 도메인 데이터), 다른 마이크로서비스 (HTTP 호출 시).
 - 정의된 작업: `HealthCheckScheduler` 등 — `SchedulerConfig` 에서 등록.
 - 인증: 외부에서 호출되는 routing 이 거의 없고 (관리/health 위주), 필요 시 gateway 통해 진입.

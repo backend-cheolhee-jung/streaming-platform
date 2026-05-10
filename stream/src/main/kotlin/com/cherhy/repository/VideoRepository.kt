@@ -54,7 +54,9 @@ interface VideoRepository {
     ): Boolean
 }
 
-class VideoRepositoryImpl(private val db: Database = database) : VideoRepository {
+class VideoRepositoryImpl(
+    private val db: Database = database,
+) : VideoRepository {
     override suspend fun save(
         userId: UserId,
         postId: PostId,
@@ -72,7 +74,7 @@ class VideoRepositoryImpl(private val db: Database = database) : VideoRepository
             set(it.size, size)
             set(it.extension, extension)
             set(it.price, price)
-        }.toVideoId()
+        } as VideoId
 
     override suspend fun update(
         videoId: VideoId,
