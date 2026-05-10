@@ -2,13 +2,12 @@ package com.cherhy.repository
 
 import com.cherhy.api.VideoDetailResponse
 import com.cherhy.common.util.extension.noReturn
+import com.cherhy.common.util.model.Price
 import com.cherhy.common.util.model.UserId
 import com.cherhy.domain.*
 import com.cherhy.plugins.database
-import org.ktorm.dsl.delete
-import org.ktorm.dsl.eq
-import org.ktorm.dsl.insert
-import org.ktorm.dsl.update
+import org.ktorm.database.Database
+import org.ktorm.dsl.*
 import org.ktorm.entity.find
 
 interface VideoRepository {
@@ -19,6 +18,7 @@ interface VideoRepository {
         uniqueName: VideoUniqueName,
         size: VideoSize,
         extension: VideoExtension,
+        price: Price,
     ): VideoId
 
     suspend fun update(
@@ -54,7 +54,7 @@ interface VideoRepository {
     ): Boolean
 }
 
-class VideoRepositoryImpl : VideoRepository {
+class VideoRepositoryImpl(private val db: Database = database) : VideoRepository {
     override suspend fun save(
         userId: UserId,
         postId: PostId,
@@ -62,14 +62,16 @@ class VideoRepositoryImpl : VideoRepository {
         uniqueName: VideoUniqueName,
         size: VideoSize,
         extension: VideoExtension,
+        price: Price,
     ) =
-        database.insert(Videos) {
-            set(it.owner, userId.value)
-            set(it.post, postId.value)
-            set(it.name, name.value)
-            set(it.uniqueName, uniqueName.value)
-            set(it.size, size.value)
-            set(it.extension, extension.value)
+        db.insertAndGenerateKey(Videos) {
+            set(it.owner, userId)
+            set(it.post, postId)
+            set(it.name, name)
+            set(it.uniqueName, uniqueName)
+            set(it.size, size)
+            set(it.extension, extension)
+            set(it.price, price)
         }.toVideoId()
 
     override suspend fun update(
@@ -80,14 +82,14 @@ class VideoRepositoryImpl : VideoRepository {
         size: VideoSize,
         extension: VideoExtension,
     ) =
-        database.update(Videos) {
-            set(it.name, name.value)
-            set(it.uniqueName, uniqueName.value)
-            set(it.size, size.value)
-            set(it.extension, extension.value)
+        db.update(Videos) {
+            set(it.name, name)
+            set(it.uniqueName, uniqueName)
+            set(it.size, size)
+            set(it.extension, extension)
             where {
-                it.id eq videoId.value
-                it.owner eq userId.value
+                it.id eq videoId
+                it.owner eq userId
             }
         }.noReturn
 
@@ -95,23 +97,23 @@ class VideoRepositoryImpl : VideoRepository {
         userId: UserId,
         videoId: VideoId,
     ) =
-        database.delete(Videos) {
-            it.id eq videoId.value
-            it.owner eq userId.value
+        db.delete(Videos) {
+            it.id eq videoId
+            it.owner eq userId
         }.noReturn
 
     override suspend fun findOne(
         videoId: VideoId,
     ) =
-        database.videos.find {
-            it.id eq videoId.value
+        db.videos.find {
+            it.id eq videoId
         }?.let(VideoDetailResponse::of)
 
     override suspend fun findOne(
         postId: PostId,
     ) =
-        database.videos.find {
-            it.post eq postId.value
+        db.videos.find {
+            it.post eq postId
         }?.let(VideoDetailResponse::of)
 
     override suspend fun findOne(
@@ -119,14 +121,14 @@ class VideoRepositoryImpl : VideoRepository {
         postId: PostId,
         videoId: VideoId,
     ) =
-        database.videos.find {
-            it.owner eq userId.value
-            it.post eq postId.value
-            it.id eq videoId.value
+        db.videos.find {
+            it.owner eq userId
+            it.post eq postId
+            it.id eq videoId
         }?.let(VideoDetailResponse::of)
 
     override suspend fun isExists(
         videoId: VideoId,
     ) =
-        database.videos.find { it.id eq videoId.value } != null
+        db.videos.find { it.id eq videoId } != null
 }

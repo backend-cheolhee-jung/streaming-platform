@@ -10,10 +10,18 @@ import org.ktorm.schema.decimal
 import org.ktorm.schema.long
 
 object PurchasedVideos : BaseTable<PurchasedVideo>("purchased_video") {
-    val id = long("id").primaryKey().bindTo { it.id.value }
-    val userId = long("user_id").bindTo { it.userId.value }
-    val videoId = long("video_id").bindTo { it.videoId.value }
-    val price = decimal("price").bindTo { it.purchasePrice.value }
+    val id = long("id").primaryKey()
+        .transform({ PurchasedVideoId.of(it) }, { it.value })
+        .bindTo { it.id }
+    val userId = long("user_id")
+        .transform({ UserId.of(it) }, { it.value })
+        .bindTo { it.userId }
+    val videoId = long("video_id")
+        .transform({ VideoId.of(it) }, { it.value })
+        .bindTo { it.videoId }
+    val price = decimal("price")
+        .transform({ Price.of(it) }, { it.value })
+        .bindTo { it.purchasePrice }
 }
 
 interface PurchasedVideo : BaseEntity<PurchasedVideo> {

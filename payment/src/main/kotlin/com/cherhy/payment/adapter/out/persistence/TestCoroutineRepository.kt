@@ -1,5 +1,6 @@
 package com.cherhy.payment.adapter.out.persistence
 
+import com.cherhy.payment.annotation.PersistenceAdapter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactor.awaitSingleOrNull
@@ -11,7 +12,6 @@ import org.springframework.data.r2dbc.core.select
 import org.springframework.data.relational.core.query.Criteria
 import org.springframework.data.relational.core.query.Query
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
-import org.springframework.stereotype.Repository
 
 interface TestCoroutineRepository : CoroutineCrudRepository<TestR2dbcEntity, Long>, TestRepositoryCustom
 
@@ -28,7 +28,7 @@ interface TestRepositoryCustom {
     ): Long
 }
 
-@Repository
+@PersistenceAdapter
 class TestRepositoryCustomImpl(
     private val template: R2dbcEntityTemplate,
 ) : TestRepositoryCustom {
@@ -36,41 +36,33 @@ class TestRepositoryCustomImpl(
         name: String?,
         status: String?,
         pageable: Pageable,
-    ) =
-        template.select<TestR2dbcEntity>()
-            .findAll(buildQuery(name, status))
+    ): Flow<TestR2dbcEntity> {
+        val criteria = buildList {
+            if (name != null) add(Criteria.where(TestR2dbcEntity::name.toDotPath()).`is`(name))
+            if (status != null) add(Criteria.where(TestR2dbcEntity::status.toDotPath()).`is`(status))
+        }
+        val query = if (criteria.isEmpty()) Query.empty() else Query.query(criteria.reduce(Criteria::and))
+        return template.select<TestR2dbcEntity>()
+            .findAll(query, pageable)
+    }
 
     override suspend fun countAll(
         name: String?,
         status: String?,
-    ) =
-        template.select<TestR2dbcEntity>()
-            .count(buildQuery(name, status))
-}
-
-private fun buildQuery(
-    name: String?,
-    status: String?,
-): Query {
-    var criteria: Criteria? = null
-    if (name != null) {
-        criteria = Criteria.where(TestR2dbcEntity::name.toDotPath()).`is`(name)
-    }
-    if (status != null) {
-        criteria = if (criteria == null) {
-            Criteria.where(TestR2dbcEntity::status.toDotPath()).`is`(status)
-        } else {
-            criteria.and(TestR2dbcEntity::status.toDotPath()).`is`(status)
+    ): Long {
+        val criteria = buildList {
+            if (name != null) add(Criteria.where(TestR2dbcEntity::name.toDotPath()).`is`(name))
+            if (status != null) add(Criteria.where(TestR2dbcEntity::status.toDotPath()).`is`(status))
         }
+        val query = if (criteria.isEmpty()) Query.empty() else Query.query(criteria.reduce(Criteria::and))
+        return template.select<TestR2dbcEntity>()
+            .matching(query)
+            .count()
+            .awaitSingleOrNull() ?: 0L
     }
-    return if (criteria == null) Query.empty() else Query.query(criteria)
 }
-
-private suspend fun <T> ReactiveSelectOperation.ReactiveSelect<T>.count(
-    toQuery: Query,
-): Long =
-    this.matching(toQuery).count().awaitSingleOrNull()!!
 
 fun <T : Any> ReactiveSelectOperation.ReactiveSelect<T>.findAll(
     predicate: Query,
-): Flow<T> = this.matching(predicate).all().asFlow()
+    pageable: Pageable,
+): Flow<T> = this.matching(predicate.with(pageable)).all().asFlow()

@@ -3,7 +3,7 @@ package com.cherhy.gateway.filter
 import com.cherhy.common.util.USER_ID
 import com.cherhy.gateway.security.GatewayUserPrincipal
 import com.cherhy.gateway.security.JwtAuthenticationToken
-import io.kotest.core.spec.style.FunSpec
+import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.springframework.cloud.gateway.filter.GatewayFilterChain
@@ -14,11 +14,11 @@ import org.springframework.security.core.context.SecurityContextImpl
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 
-class UserContextGatewayFilterTest : FunSpec({
+class UserContextGatewayFilterTest : StringSpec({
 
     val filter = UserContextGatewayFilter()
 
-    test("adds user-id header when security context has JwtAuthenticationToken") {
+    "adds user-id header when security context has JwtAuthenticationToken" {
         val principal = GatewayUserPrincipal(42L, "alice", listOf("UNPAID_MEMBER"))
         val auth = JwtAuthenticationToken(principal, "dummy-token")
         val securityContext = SecurityContextImpl(auth)
@@ -43,7 +43,7 @@ class UserContextGatewayFilterTest : FunSpec({
         capturedUserId shouldBe "42"
     }
 
-    test("passes exchange unchanged when security context is empty") {
+    "passes exchange unchanged when security context is empty" {
         val request = MockServerHttpRequest.get("/test").build()
         val exchange = MockServerWebExchange.from(request)
 

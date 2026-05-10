@@ -10,6 +10,6 @@ suspend fun <T> reactiveTransaction(
     transactionType: TransactionType = TransactionType.WRITE,
     block: suspend R2dbcTransaction.() -> T,
 ): T {
-    val db = if (transactionType == READ_ONLY) DatabaseFactory.slaveDatabase else DatabaseFactory.masterDatabase
-    return suspendTransaction(db = db) { block() }
+    val database = if (transactionType == READ_ONLY) DatabaseFactory.slaveDatabase else DatabaseFactory.masterDatabase
+    return suspendTransaction(db = database) { block() }
 }
