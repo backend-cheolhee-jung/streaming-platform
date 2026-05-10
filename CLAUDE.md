@@ -226,7 +226,7 @@ class User(id: EntityID<UserId>) : BaseEntity(id = id.unwrap(), table = Users) {
 
 ### 테스트
 
-- 프레임워크: **Kotest FunSpec** + **TestContainers**
+- 프레임워크: **Kotest StringSpec / BehaviorSpec** + **TestContainers**
 - DB가 필요한 통합 테스트는 `TestContainers`의 실제 PostgreSQL 컨테이너를 사용한다
 - 각 테스트 종료 후 `afterTest`/`afterEach`에서 테스트 데이터를 정리해 격리한다
 - Spring 모듈: `@SpringBootTest` + `kotest-extensions-spring`
@@ -416,9 +416,9 @@ object EntityFactory {
 val entity = EntityFactory.generateTestR2dbcEntity(id = 1)
 ```
 
-### 테스트는 Kotest BehaviorSpec (Given/When/Then)
+### 테스트는 Kotest BehaviorSpec / StringSpec
 
-Spring 통합 테스트는 `BehaviorSpec`, 도메인/단위 테스트는 `FunSpec`을 사용한다.
+Spring 통합 테스트는 `BehaviorSpec`, 도메인/단위 테스트는 `StringSpec`을 사용한다.
 
 ```kotlin
 // ✅ Spring 통합 테스트
