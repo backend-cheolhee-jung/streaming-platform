@@ -1,16 +1,19 @@
 package com.cherhy.payment
 
 import com.cherhy.payment.adapter.out.CacheReader
+import com.cherhy.payment.util.WithTestContainers
 import com.cherhy.payment.util.lib.onFailAction
 import com.cherhy.payment.util.lib.set
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.redis.core.StringRedisTemplate
 
+@SpringBootTest
 class CacheComponent(
     private val cacheReader: CacheReader,
     private val stringRedisTemplate: StringRedisTemplate,
-) : BehaviorSpec({
+) : WithTestContainers, BehaviorSpec({
     Given("Cache에서 조회 할 때 ") {
         When("값이 없는 경우 Result 객체를 반환 받고 ") {
             val result = cacheReader.read("key")

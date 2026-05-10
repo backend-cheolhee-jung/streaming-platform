@@ -68,7 +68,7 @@ class PostRepositoryImpl(
             set(it.content, content)
             set(it.author, userId)
             set(it.category, category)
-        }.toPostId()
+        } as PostId
 
     override suspend fun update(
         userId: UserId,

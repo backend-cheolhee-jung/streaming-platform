@@ -74,7 +74,7 @@ class VideoRepositoryImpl(
             set(it.size, size)
             set(it.extension, extension)
             set(it.price, price)
-        }.toVideoId()
+        } as VideoId
 
     override suspend fun update(
         videoId: VideoId,

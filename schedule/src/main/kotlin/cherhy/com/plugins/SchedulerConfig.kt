@@ -7,8 +7,8 @@ import extension.ktor.exposed.shedlock
 import extension.ktor.schedule
 import io.ktor.server.application.*
 import mu.KotlinLogging
-import org.jetbrains.exposed.sql.SortOrder.DESC
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.v1.core.SortOrder.DESC
+import org.jetbrains.exposed.v1.jdbc.selectAll
 import kotlin.time.Duration.Companion.minutes
 
 fun Application.configureScheduler() {

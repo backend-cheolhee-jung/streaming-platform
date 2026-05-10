@@ -6,7 +6,7 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.kotest.matchers.shouldNotBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.r2dbc.spi.ConnectionFactory
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.awaitFirstOrNull
@@ -41,7 +41,7 @@ class TestR2dbcRepositoryTest : BehaviorSpec({
             .build()
 
         dbClient = DatabaseClient.create(connectionFactory)
-        template = R2dbcEntityTemplate(connectionFactory, PostgresDialect.INSTANCE)
+        template = R2dbcEntityTemplate(dbClient, PostgresDialect.INSTANCE)
 
         // Create schema
         dbClient.sql(
@@ -70,8 +70,7 @@ class TestR2dbcRepositoryTest : BehaviorSpec({
         val inserted = template.insert<TestR2dbcEntity>()
             .using(TestR2dbcEntity(name = name, status = status))
             .awaitFirstOrNull()
-        inserted.shouldNotBeNull()
-        return inserted
+        return inserted.shouldNotBeNull()
     }
 
     Given("name과 status가 모두 null인 경우") {

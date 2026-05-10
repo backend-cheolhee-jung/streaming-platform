@@ -9,7 +9,7 @@ spring:
       key-prefix: payment
   data:
     mongodb:
-      uri: mongodb://localhost:27017/test
+      uri: mongodb://localhost:27717/test
     web:
       pageable:
         one-indexed-parameters: true
