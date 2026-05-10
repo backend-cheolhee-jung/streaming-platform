@@ -12,6 +12,7 @@ import org.springframework.context.annotation.DependsOn
 import org.springframework.context.annotation.Primary
 import org.springframework.data.r2dbc.config.EnableR2dbcAuditing
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
+import org.springframework.data.r2dbc.dialect.PostgresDialect
 import org.springframework.r2dbc.connection.R2dbcTransactionManager
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.transaction.ReactiveTransactionManager
@@ -74,7 +75,7 @@ class ConnectionFactoryConfig(
     fun r2dbcEntityTemplate(
         @Qualifier(CONNECTION_FACTORY) connectionFactory: ConnectionFactory
     ) =
-        R2dbcEntityTemplate(connectionFactory)
+        R2dbcEntityTemplate(connectionFactory, PostgresDialect.INSTANCE)
 
     @Bean
     @DependsOn(CONNECTION_FACTORY)
