@@ -8,6 +8,7 @@ import com.cherhy.common.util.model.*
 import com.cherhy.domain.*
 import com.cherhy.plugins.database
 import com.cherhy.util.extension.contains
+import org.ktorm.database.Database
 import org.ktorm.dsl.*
 import org.ktorm.entity.count
 import org.ktorm.entity.filter
@@ -53,9 +54,7 @@ interface PostRepository {
     ): PageResponse<PostItemResponse>
 }
 
-class PostRepositoryImpl(
-    private val db: org.ktorm.database.Database = database,
-) : PostRepository {
+class PostRepositoryImpl(private val db: Database = database) : PostRepository {
     override suspend fun save(
         userId: UserId,
         title: PostTitle,
@@ -121,9 +120,16 @@ class PostRepositoryImpl(
         size: Size,
     ): PageResponse<PostItemResponse> {
         val generator = PageOffsetCalculator.of(page, size)
-        val expression = db.posts.filter { it.author eq userId }
-            .let { seq -> keyword?.let { kw -> seq.filter { it.title contains kw.value } } ?: seq }
-            .let { seq -> category?.let { cat -> seq.filter { it.category eq cat } } ?: seq }
+        val expression = db.posts.also { query ->
+                query.filter { it.author eq userId }
+                keyword?.let { keyword ->
+                    query.filter { it.title contains keyword.value }
+                }
+                category?.let { category ->
+                    query.filter { it.category eq category }
+                }
+            }
+
 
         val count = expression.count().toLong()
         val data = expression.query

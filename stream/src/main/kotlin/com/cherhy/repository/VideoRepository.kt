@@ -6,6 +6,7 @@ import com.cherhy.common.util.model.Price
 import com.cherhy.common.util.model.UserId
 import com.cherhy.domain.*
 import com.cherhy.plugins.database
+import org.ktorm.database.Database
 import org.ktorm.dsl.*
 import org.ktorm.entity.find
 
@@ -53,9 +54,7 @@ interface VideoRepository {
     ): Boolean
 }
 
-class VideoRepositoryImpl(
-    private val db: org.ktorm.database.Database = database,
-) : VideoRepository {
+class VideoRepositoryImpl(private val db: Database = database) : VideoRepository {
     override suspend fun save(
         userId: UserId,
         postId: PostId,

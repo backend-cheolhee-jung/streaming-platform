@@ -6,6 +6,7 @@ import com.cherhy.domain.PurchasedVideos
 import com.cherhy.domain.VideoId
 import com.cherhy.domain.purchasedVideos
 import com.cherhy.plugins.database
+import org.ktorm.database.Database
 import org.ktorm.dsl.and
 import org.ktorm.dsl.eq
 import org.ktorm.dsl.insert
@@ -24,9 +25,7 @@ interface PurchasedVideoRepository {
     )
 }
 
-class PurchasedVideoRepositoryImpl(
-    private val db: org.ktorm.database.Database = database,
-) : PurchasedVideoRepository {
+class PurchasedVideoRepositoryImpl(private val db: Database = database) : PurchasedVideoRepository {
     override suspend fun isExists(
         userId: UserId,
         videoId: VideoId
