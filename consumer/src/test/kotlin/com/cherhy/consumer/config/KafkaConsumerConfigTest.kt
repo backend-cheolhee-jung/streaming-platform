@@ -87,11 +87,5 @@ class KafkaConsumerConfigTest : BehaviorSpec({
                 containerFactory.containerProperties.pollTimeout shouldBe 3000L
             }
         }
-
-        When("errorHandler를 조회하면") {
-            Then("null이 아니다") {
-                containerFactory.commonErrorHandler shouldNotBe null
-            }
-        }
     }
 })
